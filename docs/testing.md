@@ -221,3 +221,31 @@ npm test -- --watch
    - Используйте моки для внешних зависимостей
    - Создавайте реалистичные тестовые данные
    - Избегайте излишнего мокирования 
+
+# Тестирование фильтрации по категориям
+
+## Проверка фильтрации по URL
+- Для роута `/category/:id` должны отображаться только вакансии выбранной категории
+- Проверяется, что фильтрация работает как по параметру `categoryId`, так и по `id`
+- Тесты используют моковые данные с разными категориями
+
+## Пример теста
+```js
+import { renderHook } from '@testing-library/react';
+import { useVacancyFilters } from '../hooks/useVacancyFilters';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+
+describe('useVacancyFilters', () => {
+  it('filters vacancies by category id from URL', () => {
+    const wrapper = ({ children }) => (
+      <MemoryRouter initialEntries={['/category/2']}>
+        <Routes>
+          <Route path="/category/:id" element={children} />
+        </Routes>
+      </MemoryRouter>
+    );
+    const { result } = renderHook(() => useVacancyFilters(), { wrapper });
+    expect(result.current.filteredVacancies.every(v => v.category.id === 2)).toBe(true);
+  });
+});
+``` 

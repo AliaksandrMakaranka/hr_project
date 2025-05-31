@@ -30,7 +30,7 @@ import {
  */
 const JobsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { filteredVacancies = [], categoryId, cityId } = useVacancyFilters() || {};
+  const { filteredVacancies, categoryId, cityId } = useVacancyFilters();
 
   // Получение информации для заголовка
   const getHeaderInfo = () => {
@@ -70,12 +70,12 @@ const JobsPage: React.FC = () => {
       <PageHeader>
         <PageTitle>{getHeaderInfo()}</PageTitle>
         <LocationInfo>
-          Найдено вакансий: {filteredVacancies?.length || 0}
+          Найдено вакансий: {filteredVacancies.length}
         </LocationInfo>
       </PageHeader>
 
       <VacanciesList>
-        {Array.isArray(filteredVacancies) && filteredVacancies.length > 0 ? (
+        {filteredVacancies.length > 0 ? (
           filteredVacancies.map((vacancy: Vacancy) => (
             <VacancyCard key={vacancy.id}>
               <VacancyTitle data-testid={`vacancy-title-${vacancy.id}`}>{vacancy.title}</VacancyTitle>

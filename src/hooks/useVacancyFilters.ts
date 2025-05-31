@@ -8,13 +8,23 @@ import { filterVacancies } from '../utils/filters';
  * @returns Отфильтрованные вакансии и информацию о фильтрах
  */
 export const useVacancyFilters = () => {
-  const { categoryId, cityId } = useParams();
+  const { categoryId, cityId, id } = useParams();
 
-  const categoryIdNum = categoryId ? Number(categoryId) : null;
-  const cityIdNum = cityId ? Number(cityId) : null;
+  // Поддержка как categoryId, так и id для универсальности
+  const categoryIdNum = categoryId
+    ? parseInt(categoryId, 10)
+    : id
+      ? parseInt(id, 10)
+      : null;
+  const cityIdNum = cityId ? parseInt(cityId, 10) : null;
+
+  console.log('URL params:', { categoryId, cityId, id });
+  console.log('Parsed IDs:', { categoryIdNum, cityIdNum });
 
   const filteredVacancies = useMemo(() => {
-    return filterVacancies(vacancies, categoryIdNum, cityIdNum);
+    const filtered = filterVacancies(vacancies, categoryIdNum, cityIdNum);
+    console.log('Filtered vacancies:', filtered);
+    return filtered;
   }, [categoryIdNum, cityIdNum]);
 
   return {

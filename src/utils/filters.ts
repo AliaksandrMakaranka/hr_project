@@ -15,11 +15,20 @@ export const filterVacancies = (
   categoryId?: number | null,
   cityId?: number | null
 ): Vacancy[] => {
+  console.log('Filtering vacancies with params:', { categoryId, cityId });
+  console.log('First vacancy category:', vacancies[0]?.category);
+
   return vacancies.filter(vacancy => {
     if (categoryId && cityId) {
       return vacancy.category.id === categoryId && vacancy.city.id === cityId;
     } else if (categoryId) {
-      return vacancy.category.id === categoryId;
+      const matches = vacancy.category.id === categoryId;
+      console.log(`Vacancy ${vacancy.id} category match:`, {
+        vacancyCategoryId: vacancy.category.id,
+        filterCategoryId: categoryId,
+        matches
+      });
+      return matches;
     } else if (cityId) {
       return vacancy.city.id === cityId;
     }

@@ -33,7 +33,7 @@ export const vacancies: Vacancy[] = [
     company: 'BUDOWLANKA Sp. z o.o.',
     salary: '5500-7500 PLN',
     city: cities[0], // Варшава
-    category: jobCategories[0], // Строительство
+    category: jobCategories.find(c => c.id === 1)!, // Строительство
     description: 'Ищем опытного каменщика для работы на крупных строительных объектах в Варшаве. Работа с современными материалами, стабильная занятость.',
     responsibilities: [
       'Кладка кирпича и блоков',
@@ -70,7 +70,7 @@ export const vacancies: Vacancy[] = [
     company: 'REMONTY POLSKA',
     salary: '5000-7000 PLN',
     city: cities[1], // Краков
-    category: jobCategories[0], // Строительство
+    category: jobCategories.find(c => c.id === 1)!, // Строительство
     description: 'Требуется отделочник для работы в Кракове. Работа с современными материалами, дружный коллектив.',
     responsibilities: [
       'Выполнение отделочных работ',
@@ -108,7 +108,7 @@ export const vacancies: Vacancy[] = [
     company: 'RESTAURACJA POLSKA',
     salary: '4000-6000 PLN',
     city: cities[1], // Краков
-    category: jobCategories[1], // Общественное питание
+    category: jobCategories.find(c => c.id === 2)!, // Общественное питание
     description: 'Требуется повар в ресторан польской кухни в центре Кракова. Работа в дружном коллективе, возможность творчества.',
     responsibilities: [
       'Приготовление блюд польской кухни',
@@ -145,7 +145,7 @@ export const vacancies: Vacancy[] = [
     company: 'HOTEL KRAKOW',
     salary: '3500-4500 PLN',
     city: cities[1], // Краков
-    category: jobCategories[1], // Общественное питание
+    category: jobCategories.find(c => c.id === 2)!, // Общественное питание
     description: 'Ищем официанта в отель в центре Кракова. Работа с международными гостями, возможность карьерного роста.',
     responsibilities: [
       'Обслуживание гостей',
@@ -183,7 +183,7 @@ export const vacancies: Vacancy[] = [
     company: 'TRANSPORT POLSKA',
     salary: '4500-6500 PLN',
     city: cities[2], // Вроцлав
-    category: jobCategories[2], // Логистика
+    category: jobCategories.find(c => c.id === 3)!, // Логистика
     description: 'Требуется водитель категории C для международных перевозок. Стабильная работа, хорошие условия.',
     responsibilities: [
       'Международные перевозки',
@@ -200,19 +200,19 @@ export const vacancies: Vacancy[] = [
     benefits: [
       'Стабильная работа',
       'Официальное трудоустройство',
-      'Страховка',
-      'Дополнительные бонусы'
+      'Возможность карьерного роста',
+      'Обучение'
     ],
     employer: {
       name: 'TRANSPORT POLSKA',
-      email: 'kariera@transport.pl',
-      phone: '+48 456 789 123',
+      email: 'hr@transport.pl',
+      phone: '+48 123 456 789',
       website: 'www.transport.pl'
     },
     employmentType: 'full-time',
     experience: 'от 1 года',
     education: 'Среднее',
-    createdAt: '2024-03-12'
+    createdAt: '2024-03-13'
   },
   {
     id: 6,
@@ -220,7 +220,7 @@ export const vacancies: Vacancy[] = [
     company: 'DOSTAWA EXPRESS',
     salary: '4000-5000 PLN',
     city: cities[3], // Познань
-    category: jobCategories[2], // Логистика
+    category: jobCategories.find(c => c.id === 3)!, // Логистика
     description: 'Ищем курьера для доставки посылок по городу. Работа на своем автомобиле, гибкий график.',
     responsibilities: [
       'Доставка посылок',
@@ -258,7 +258,7 @@ export const vacancies: Vacancy[] = [
     company: 'SKLEP MODA',
     salary: '3500-4500 PLN',
     city: cities[4], // Гданьск
-    category: jobCategories[3], // Продажи
+    category: jobCategories.find(c => c.id === 4)!, // Продажи
     description: 'Требуется продавец-консультант в магазин одежды. Работа с клиентами, дружный коллектив.',
     responsibilities: [
       'Обслуживание клиентов',
@@ -296,7 +296,7 @@ export const vacancies: Vacancy[] = [
     company: 'FABRYKA POLSKA',
     salary: '4000-5500 PLN',
     city: cities[5], // Лодзь
-    category: jobCategories[4], // Производство
+    category: jobCategories.find(c => c.id === 5)!, // Производство
     description: 'Ищем оператора станков с ЧПУ. Работа на современном оборудовании, обучение.',
     responsibilities: [
       'Работа на станках с ЧПУ',
@@ -334,7 +334,7 @@ export const vacancies: Vacancy[] = [
     company: 'METAL POLSKA',
     salary: '5000-7000 PLN',
     city: cities[0], // Варшава
-    category: jobCategories[0], // Строительство
+    category: jobCategories.find(c => c.id === 1)!, // Строительство
     description: 'Требуется сварщик для работы на строительных объектах в Варшаве. Работа с современным оборудованием.',
     responsibilities: [
       'Выполнение сварочных работ',
@@ -372,7 +372,7 @@ export const vacancies: Vacancy[] = [
     company: 'CAFE KRAKOW',
     salary: '3500-4500 PLN',
     city: cities[1], // Краков
-    category: jobCategories[1], // Общественное питание
+    category: jobCategories.find(c => c.id === 2)!, // Общественное питание
     description: 'Ищем баристу в кофейню в центре Кракова. Работа в дружной команде, возможность творчества.',
     responsibilities: [
       'Приготовление кофе',
