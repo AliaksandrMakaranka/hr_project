@@ -100,4 +100,14 @@ export const NavLinkButton = styled.button`
   &:hover {
     background: ${({ theme }) => theme.colors.primaryDark};
   }
+`;
+
+export const NoVacanciesMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 1rem 0;
 `; 

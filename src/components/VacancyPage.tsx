@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import { vacancies } from '../data';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ROUTES, NAVIGATION } from '../constants/routes';
+import { logger } from '../utils/logger';
 
 // Стилизованные компоненты
 const Container = styled.div`
@@ -179,20 +180,29 @@ const VacancyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Find the vacancy by ID
+  // Find the vacancy by ID with proper type checking
   const vacancy = vacancies.find(v => v.id === Number(id));
 
   useEffect(() => {
-    // Add console log for debugging
-    console.log('Vacancy ID:', id);
-    console.log('Found vacancy:', vacancy);
+    logger.debug('VacancyPage mounted', { id, vacancyFound: !!vacancy });
+    
+    if (!id) {
+      logger.warn('No vacancy ID provided');
+      return;
+    }
+
+    if (!vacancy) {
+      logger.error('Vacancy not found', { id });
+    }
   }, [id, vacancy]);
 
   const handleGoBack = () => {
+    logger.debug('Navigating back');
     navigate(-1);
   };
 
   const handleGoToCities = () => {
+    logger.debug('Navigating to cities page');
     navigate(ROUTES.CITIES);
   };
 
@@ -214,6 +224,11 @@ const VacancyPage: React.FC = () => {
       </Container>
     );
   }
+
+  // Ensure all required arrays exist before mapping
+  const responsibilities = vacancy.responsibilities || [];
+  const requirements = vacancy.requirements || [];
+  const benefits = vacancy.benefits || [];
 
   return (
     <Container>
@@ -242,8 +257,8 @@ const VacancyPage: React.FC = () => {
           <ContentSection>
             <SectionTitle>Обязанности</SectionTitle>
             <List>
-              {vacancy.responsibilities.map((item, index) => (
-                <ListItem key={index}>{item}</ListItem>
+              {responsibilities.map((item, index) => (
+                <ListItem key={`responsibility-${index}`}>{item}</ListItem>
               ))}
             </List>
           </ContentSection>
@@ -251,8 +266,8 @@ const VacancyPage: React.FC = () => {
           <ContentSection>
             <SectionTitle>Требования</SectionTitle>
             <List>
-              {vacancy.requirements.map((item, index) => (
-                <ListItem key={index}>{item}</ListItem>
+              {requirements.map((item, index) => (
+                <ListItem key={`requirement-${index}`}>{item}</ListItem>
               ))}
             </List>
           </ContentSection>
@@ -260,8 +275,8 @@ const VacancyPage: React.FC = () => {
           <ContentSection>
             <SectionTitle>Условия работы</SectionTitle>
             <List>
-              {vacancy.benefits.map((item, index) => (
-                <ListItem key={index}>{item}</ListItem>
+              {benefits.map((item, index) => (
+                <ListItem key={`benefit-${index}`}>{item}</ListItem>
               ))}
             </List>
           </ContentSection>
@@ -273,32 +288,25 @@ const VacancyPage: React.FC = () => {
             <ContactInfo>
               <ContactItem>
                 <ContactLabel>Компания</ContactLabel>
-                <ContactValue>{vacancy.employer.name}</ContactValue>
+                <ContactValue>{vacancy.company}</ContactValue>
               </ContactItem>
               <ContactItem>
-                <ContactLabel>Email</ContactLabel>
-                <ContactValue>{vacancy.employer.email}</ContactValue>
+                <ContactLabel>Город</ContactLabel>
+                <ContactValue>{vacancy.city?.name || 'Не указан'}</ContactValue>
               </ContactItem>
               <ContactItem>
-                <ContactLabel>Телефон</ContactLabel>
-                <ContactValue>{vacancy.employer.phone}</ContactValue>
+                <ContactLabel>Тип занятости</ContactLabel>
+                <ContactValue>{vacancy.employmentType}</ContactValue>
               </ContactItem>
-              {vacancy.employer.website && (
-                <ContactItem>
-                  <ContactLabel>Веб-сайт</ContactLabel>
-                  <ContactValue>
-                    <a href={`https://${vacancy.employer.website}`} target="_blank" rel="noopener noreferrer">
-                      {vacancy.employer.website}
-                    </a>
-                  </ContactValue>
-                </ContactItem>
-              )}
             </ContactInfo>
           </ContentSection>
 
-          <ApplyButton onClick={() => alert('Функционал отклика на вакансию будет добавлен позже')}>
-            Откликнуться на вакансию
-          </ApplyButton>
+          <ContentSection>
+            <SectionTitle>Откликнуться на вакансию</SectionTitle>
+            <ApplyButton onClick={() => logger.info('Apply button clicked', { vacancyId: vacancy.id })}>
+              Откликнуться
+            </ApplyButton>
+          </ContentSection>
         </div>
       </MainContent>
     </Container>
