@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { vacancies } from '../data/vacancies';
 import { filterVacancies } from '../utils/filters';
-import type { Vacancy } from '../types/vacancy';
 
 /**
  * Хук для фильтрации вакансий по параметрам URL
