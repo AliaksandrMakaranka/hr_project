@@ -27,42 +27,50 @@ import { useNavigate } from 'react-router-dom';
 
 // Стилизованные компоненты
 const Container = styled.div`
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 20px;
+  padding: clamp(1rem, 5vw, 2rem);
 `;
 
 const Hero = styled.div`
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: clamp(2rem, 8vw, 4rem);
+  width: 100%;
 `;
 
 const Title = styled.h1`
-  font-size: 48px;
+  font-size: clamp(2rem, 5vw, 3rem);
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  line-height: 1.2;
 `;
 
 const Subtitle = styled.p`
-  font-size: 20px;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   color: #666;
-  max-width: 600px;
-  margin: 0 auto 40px;
+  max-width: min(600px, 90%);
+  margin: 0 auto clamp(2rem, 5vw, 3rem);
+  line-height: 1.6;
 `;
 
 const CategoriesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-  margin-bottom: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-bottom: clamp(2rem, 8vw, 4rem);
+  width: 100%;
 `;
 
 const CategoryCard = styled.div`
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  padding: clamp(1.5rem, 4vw, 2rem);
   transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   
   &:hover {
     transform: translateY(-5px);
@@ -73,69 +81,73 @@ const CategoryCard = styled.div`
 const CategoryHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const CategoryIcon = styled.div`
-  width: 50px;
-  height: 50px;
+  width: clamp(40px, 8vw, 50px);
+  height: clamp(40px, 8vw, 50px);
   background: #e3f2fd;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   color: #1976d2;
+  flex-shrink: 0;
 `;
 
 const CategoryName = styled.h2`
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   color: #333;
   margin: 0;
+  line-height: 1.3;
 `;
 
 const CategoryDescription = styled.p`
   color: #666;
-  margin-bottom: 20px;
-  line-height: 1.5;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  line-height: 1.6;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 `;
 
 const CategoryStats = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  padding-bottom: clamp(1rem, 3vw, 1.5rem);
   border-bottom: 1px solid #eee;
 `;
 
 const Stat = styled.div`
   text-align: center;
+  flex: 1;
 `;
 
 const StatValue = styled.div`
-  font-size: 20px;
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
   font-weight: 500;
   color: #1976d2;
 `;
 
 const StatLabel = styled.div`
-  font-size: 14px;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   color: #666;
 `;
 
 const SkillsList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 0.5rem;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const SkillTag = styled.span`
   background: #f5f5f5;
-  padding: 6px 12px;
+  padding: 0.375rem 0.75rem;
   border-radius: 16px;
-  font-size: 14px;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   color: #666;
 `;
 
@@ -145,10 +157,11 @@ const ViewButton = styled.a`
   background: #1976d2;
   color: white;
   text-decoration: none;
-  padding: 12px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border-radius: 8px;
   font-weight: 500;
   transition: background-color 0.2s;
+  margin-top: auto;
   
   &:hover {
     background: #1565c0;
@@ -156,26 +169,28 @@ const ViewButton = styled.a`
 `;
 
 const PopularCities = styled.section`
-  margin-top: 60px;
+  margin-top: clamp(2rem, 8vw, 4rem);
+  width: 100%;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 32px;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   color: #333;
-  margin-bottom: 30px;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
   text-align: center;
 `;
 
 const CitiesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem);
+  width: 100%;
 `;
 
 const CityCard = styled.a`
   background: white;
   border-radius: 8px;
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
   text-decoration: none;
   color: #333;
@@ -188,29 +203,33 @@ const CityCard = styled.a`
 `;
 
 const CityName = styled.div`
-  font-size: 18px;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 `;
 
 const CityVacancies = styled.div`
   color: #1976d2;
-  font-size: 14px;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
 `;
 
 const NavButtonsContainer = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 `;
 
 const NavLinkButton = styled.button`
   background: none;
   border: 1px solid #1976d2;
   color: #1976d2;
-  padding: 10px 20px;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
   
   &:hover {
     background: #1976d2;

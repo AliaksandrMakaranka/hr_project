@@ -20,38 +20,42 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 // Стилизованные компоненты
 const Container = styled.div`
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 20px;
+  padding: clamp(1rem, 5vw, 2rem);
 `;
 
 const Header = styled.div`
-  margin-bottom: 40px;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  width: 100%;
 `;
 
 const Title = styled.h1`
-  font-size: 36px;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  line-height: 1.3;
 `;
 
 const CompanyInfo = styled.div`
-  font-size: 20px;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   color: #666;
-  margin-bottom: 10px;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
 `;
 
 const Salary = styled.div`
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   color: #1976d2;
   font-weight: 500;
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const MainContent = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 40px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  width: 100%;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -62,32 +66,37 @@ const ContentSection = styled.section`
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin-bottom: 30px;
+  padding: clamp(1.5rem, 4vw, 2rem);
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+  width: 100%;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  line-height: 1.3;
 `;
 
 const Description = styled.p`
   color: #666;
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.875rem, 2vw, 1rem);
 `;
 
 const List = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 `;
 
 const ListItem = styled.li`
   color: #666;
-  padding: 10px 0;
+  padding: clamp(0.5rem, 2vw, 1rem) 0;
   border-bottom: 1px solid #eee;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   
   &:last-child {
     border-bottom: none;
@@ -97,18 +106,19 @@ const ListItem = styled.li`
     content: "•";
     color: #1976d2;
     font-weight: bold;
-    margin-right: 10px;
+    margin-right: 0.5rem;
   }
 `;
 
 const ContactInfo = styled.div`
   background: #f5f5f5;
   border-radius: 8px;
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  width: 100%;
 `;
 
 const ContactItem = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
   
   &:last-child {
     margin-bottom: 0;
@@ -118,20 +128,22 @@ const ContactItem = styled.div`
 const ContactLabel = styled.div`
   font-weight: 500;
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 0.25rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 `;
 
 const ContactValue = styled.div`
   color: #666;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 `;
 
 const ApplyButton = styled.button`
   background: #1976d2;
   color: white;
   border: none;
-  padding: 15px 30px;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
   border-radius: 8px;
-  font-size: 18px;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 500;
   cursor: pointer;
   width: 100%;
@@ -153,26 +165,28 @@ const Modal = styled.div<{ isOpen: boolean }>`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: clamp(1rem, 5vw, 2rem);
 `;
 
 const ModalContent = styled.div`
   background: white;
   border-radius: 12px;
-  padding: 30px;
+  padding: clamp(1.5rem, 4vw, 2rem);
   width: 100%;
-  max-width: 500px;
+  max-width: min(500px, 90vw);
   position: relative;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: clamp(0.75rem, 2vw, 1rem);
+  right: clamp(0.75rem, 2vw, 1rem);
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   cursor: pointer;
   color: #aaa;
+  padding: 0.5rem;
   
   &:hover {
     color: #777;
@@ -182,25 +196,29 @@ const CloseButton = styled.button`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  width: 100%;
 `;
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
+  width: 100%;
 `;
 
 const Label = styled.label`
   font-weight: 500;
   color: #333;
+  font-size: clamp(0.875rem, 2vw, 1rem);
 `;
 
 const Input = styled.input`
-  padding: 12px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  width: 100%;
   
   &:focus {
     outline: none;
@@ -209,12 +227,13 @@ const Input = styled.input`
 `;
 
 const TextArea = styled.textarea`
-  padding: 12px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 16px;
-  min-height: 100px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  min-height: clamp(100px, 20vw, 150px);
   resize: vertical;
+  width: 100%;
   
   &:focus {
     outline: none;
@@ -223,10 +242,11 @@ const TextArea = styled.textarea`
 `;
 
 const FileInput = styled.input`
-  padding: 12px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  width: 100%;
   
   &:focus {
     outline: none;
@@ -238,12 +258,13 @@ const SubmitButton = styled.button`
   background: #1976d2;
   color: white;
   border: none;
-  padding: 15px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
   
   &:hover {
     background: #1565c0;

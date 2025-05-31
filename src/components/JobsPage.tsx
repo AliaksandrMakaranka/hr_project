@@ -15,44 +15,50 @@
 import React from 'react';
 import styled from 'styled-components';
 import { vacancies, jobCategories, cities } from '../data';
-import type { Vacancy } from '../types';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // Стилизованные компоненты
 const Container = styled.div`
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 20px;
+  padding: clamp(1rem, 5vw, 2rem);
 `;
 
 const PageHeader = styled.div`
-  margin-bottom: 40px;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
   text-align: center;
+  width: 100%;
 `;
 
 const PageTitle = styled.h1`
-  font-size: 36px;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+  line-height: 1.3;
 `;
 
 const LocationInfo = styled.div`
-  font-size: 18px;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   color: #666;
 `;
 
 const VacanciesList = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  width: 100%;
 `;
 
 const VacancyCard = styled.div`
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  padding: clamp(1.5rem, 4vw, 2rem);
   transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   
   &:hover {
     transform: translateY(-5px);
@@ -61,26 +67,36 @@ const VacancyCard = styled.div`
 `;
 
 const VacancyTitle = styled.h2`
-  font-size: 24px;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   color: #333;
-  margin-bottom: 15px;
+  margin-bottom: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.3;
 `;
 
 const VacancyInfo = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const InfoRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
   color: #666;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  span:first-child {
+    color: #999;
+  }
 `;
 
 const VacancyDescription = styled.p`
   color: #666;
-  margin-bottom: 20px;
-  line-height: 1.5;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  line-height: 1.6;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  flex: 1;
 `;
 
 const ViewButton = styled.a`
@@ -89,10 +105,11 @@ const ViewButton = styled.a`
   background: #1976d2;
   color: white;
   text-decoration: none;
-  padding: 12px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border-radius: 8px;
   font-weight: 500;
   transition: background-color 0.2s;
+  margin-top: auto;
   
   &:hover {
     background: #1565c0;
@@ -100,20 +117,22 @@ const ViewButton = styled.a`
 `;
 
 const NavButtonsContainer = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
   display: flex;
-  gap: 10px;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  flex-wrap: wrap;
 `;
 
 const NavLinkButton = styled.button`
   background: none;
   border: 1px solid #1976d2;
   color: #1976d2;
-  padding: 10px 20px;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
   
   &:hover {
     background: #1976d2;

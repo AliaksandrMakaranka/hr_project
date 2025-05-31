@@ -1,8 +1,10 @@
-import styled, { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 import HomePage from './components/HomePage'
 import CitySelectionPage from './components/CitySelectionPage'
 import JobsPage from './components/JobsPage'
 import VacancyPage from './components/VacancyPage'
+import Navbar from './components/Navbar'
+import AboutPage from './components/AboutPage'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 const GlobalStyle = createGlobalStyle`
@@ -12,10 +14,24 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: #fafafa;
+    line-height: 1.5;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 `
 
@@ -23,13 +39,17 @@ const App = () => {
   return (
     <Router>
       <GlobalStyle />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/cities" element={<CitySelectionPage />} />
-        <Route path="/city/:cityId" element={<JobsPage />} />
-        <Route path="/category/:categoryId" element={<JobsPage />} />
-        <Route path="/vacancy/:vacancyId" element={<VacancyPage />} />
-      </Routes>
+      <Navbar />
+      <main style={{ flex: 1, width: '100%' }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cities" element={<CitySelectionPage />} />
+          <Route path="/city/:cityId" element={<JobsPage />} />
+          <Route path="/category/:categoryId" element={<JobsPage />} />
+          <Route path="/vacancy/:vacancyId" element={<VacancyPage />} />
+          <Route path="/about" element={<AboutPage />} />
+        </Routes>
+      </main>
     </Router>
   )
 }
