@@ -47,7 +47,7 @@ const CitiesPage: React.FC = () => {
   }
 
   // Фильтруем города, оставляя только те, в которых есть вакансии
-  const citiesWithVacancies = citiesWithCounts.filter(city => city.vacanciesCount > 0);
+  const citiesWithVacancies = citiesWithCounts.filter(city => (city.vacanciesCount || 0) > 0);
 
   if (citiesWithVacancies.length === 0) {
     return (

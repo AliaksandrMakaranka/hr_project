@@ -1,7 +1,6 @@
 import type { Vacancy } from '../types/vacancy';
 import type { City } from '../types/city';
 import type { JobCategory } from '../types/jobCategory';
-import { vacancies } from '../data/vacancies';
 
 /**
  * Фильтрует вакансии по категории и городу

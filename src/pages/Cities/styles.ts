@@ -9,7 +9,7 @@ export const Container = styled.div`
 
 export const PageTitle = styled.h1`
   font-size: 2rem;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: 2rem;
   text-align: center;
 `;
@@ -28,7 +28,7 @@ export const CityCard = styled(Link)`
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   text-decoration: none;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textPrimary};
   transition: all 0.2s ease;
 
   &:hover {
