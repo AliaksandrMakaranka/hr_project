@@ -54,7 +54,7 @@ import {
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { categoriesWithCounts, citiesWithCounts } = useVacancyCounts();
+  const { categoriesWithCounts = [], citiesWithCounts = [] } = useVacancyCounts() || {};
 
   const handleGoToCities = () => {
     navigate(ROUTES.CITIES);
@@ -77,44 +77,52 @@ const HomePage: React.FC = () => {
       </NavButtonsContainer>
 
       <CategoriesGrid>
-        {categoriesWithCounts.map(category => (
-          <CategoryCard key={category.id}>
-            <CategoryHeader>
-              <CategoryIcon>{category.icon}</CategoryIcon>
-              <CategoryName>{category.name}</CategoryName>
-            </CategoryHeader>
-            <CategoryDescription>{category.description}</CategoryDescription>
-            <CategoryStats>
-              <Stat>
-                <StatValue>{category.vacanciesCount}</StatValue>
-                <StatLabel>Вакансий</StatLabel>
-              </Stat>
-              <Stat>
-                <StatValue>{category.averageSalary}</StatValue>
-                <StatLabel>Средняя ЗП</StatLabel>
-              </Stat>
-            </CategoryStats>
-            <SkillsList>
-              {category.popularSkills.map((skill, index) => (
-                <SkillTag key={index}>{skill}</SkillTag>
-              ))}
-            </SkillsList>
-            <ViewButton href={ROUTES.CATEGORY(category.id)}>
-              {NAVIGATION.VIEW_VACANCIES}
-            </ViewButton>
-          </CategoryCard>
-        ))}
+        {Array.isArray(categoriesWithCounts) && categoriesWithCounts.length > 0 ? (
+          categoriesWithCounts.map(category => (
+            <CategoryCard key={category.id}>
+              <CategoryHeader>
+                <CategoryIcon>{category.icon}</CategoryIcon>
+                <CategoryName data-testid={`category-name-${category.id}`}>{category.name}</CategoryName>
+              </CategoryHeader>
+              <CategoryDescription data-testid={`category-description-${category.id}`}>{category.description}</CategoryDescription>
+              <CategoryStats>
+                <Stat>
+                  <StatValue data-testid={`category-vacancies-${category.id}`}>{category.vacanciesCount}</StatValue>
+                  <StatLabel>Вакансий</StatLabel>
+                </Stat>
+                <Stat>
+                  <StatValue data-testid={`category-salary-${category.id}`}>{`${category.averageSalary} PLN`}</StatValue>
+                  <StatLabel>Средняя ЗП</StatLabel>
+                </Stat>
+              </CategoryStats>
+              <SkillsList>
+                {category.popularSkills?.map((skill, index) => (
+                  <SkillTag key={index}>{skill}</SkillTag>
+                ))}
+              </SkillsList>
+              <ViewButton href={ROUTES.CATEGORY(category.id)}>
+                {NAVIGATION.VIEW_VACANCIES}
+              </ViewButton>
+            </CategoryCard>
+          ))
+        ) : (
+          <div>Нет доступных категорий</div>
+        )}
       </CategoriesGrid>
 
       <PopularCities>
         <SectionTitle>Популярные города</SectionTitle>
         <CitiesGrid>
-          {citiesWithCounts.map(city => (
-            <CityCard key={city.id} href={ROUTES.CITY(city.id)}>
-              <CityName>{city.name}</CityName>
-              <CityVacancies>{city.vacanciesCount} вакансий</CityVacancies>
-            </CityCard>
-          ))}
+          {Array.isArray(citiesWithCounts) && citiesWithCounts.length > 0 ? (
+            citiesWithCounts.map(city => (
+              <CityCard key={city.id} href={ROUTES.CITY(city.id)}>
+                <CityName>{city.name}</CityName>
+                <CityVacancies>{city.vacanciesCount} вакансий</CityVacancies>
+              </CityCard>
+            ))
+          ) : (
+            <div>Нет доступных городов</div>
+          )}
         </CitiesGrid>
       </PopularCities>
     </Container>

@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import React from 'react';
 import { theme } from '../theme';
+import { DefaultTheme } from 'styled-components';
 
 // Mock react-router-dom
 vi.mock('react-router-dom', () => ({
@@ -51,76 +52,47 @@ vi.mock('styled-components', async () => {
     css: () => [],
     keyframes: () => 'animation',
     ThemeContext: {
-      Consumer: ({ children }: { children: (theme: any) => React.ReactNode }) => children(theme),
+      Consumer: ({ children }: { children: (theme: DefaultTheme) => React.ReactNode }) => children(theme),
       Provider: ({ children }: { children: React.ReactNode }) => children
     }
   };
 });
 
-// Mock useVacancyCounts hook
-export const useVacancyCounts = vi.fn(() => ({
-  categoriesWithCounts: [
-    {
-      id: 1,
-      name: 'IT',
-      vacanciesCount: 2,
-      averageSalary: '3500 PLN',
-      icon: '💻',
-      description: 'IT jobs',
-      popularSkills: ['React', 'TypeScript']
-    }
-  ],
-  citiesWithCounts: [
-    {
-      id: 1,
-      name: 'Warsaw',
-      vacanciesCount: 1,
-      averageSalary: '3000 PLN'
-    },
-    {
-      id: 2,
-      name: 'Krakow',
-      vacanciesCount: 1,
-      averageSalary: '3500 PLN'
-    }
-  ]
-}));
-
 // Mock data
-vi.mock('../data/vacancies', () => ({
-  vacancies: [
-    {
-      id: 1,
-      title: 'Frontend Developer',
-      company: 'Tech Corp',
-      salary: '3000-4000 PLN',
-      city: { id: 1, name: 'Warsaw' },
-      category: { id: 1, name: 'IT' },
-      employmentType: 'Full-time',
-      description: 'Looking for a skilled frontend developer'
-    },
-    {
-      id: 2,
-      title: 'Backend Developer',
-      company: 'Tech Corp',
-      salary: '4000-5000 PLN',
-      city: { id: 2, name: 'Krakow' },
-      category: { id: 1, name: 'IT' },
-      employmentType: 'Full-time',
-      description: 'Looking for a skilled backend developer'
-    }
-  ]
-}));
+// vi.mock('../data/vacancies', () => ({
+//   vacancies: [
+//     {
+//       id: 1,
+//       title: 'Frontend Developer',
+//       company: 'Tech Corp',
+//       salary: '3000-4000 PLN',
+//       city: { id: 1, name: 'Warsaw' },
+//       category: { id: 1, name: 'IT' },
+//       employmentType: 'Full-time',
+//       description: 'Looking for a skilled frontend developer'
+//     },
+//     {
+//       id: 2,
+//       title: 'Backend Developer',
+//       company: 'Tech Corp',
+//       salary: '4000-5000 PLN',
+//       city: { id: 2, name: 'Krakow' },
+//       category: { id: 1, name: 'IT' },
+//       employmentType: 'Full-time',
+//       description: 'Looking for a skilled backend developer'
+//     }
+//   ]
+// }));
 
-vi.mock('../data/cities', () => ({
-  cities: [
-    { id: 1, name: 'Warsaw', vacanciesCount: 1 },
-    { id: 2, name: 'Krakow', vacanciesCount: 1 }
-  ]
-}));
+// vi.mock('../data/cities', () => ({
+//   cities: [
+//     { id: 1, name: 'Warsaw', vacanciesCount: 1 },
+//     { id: 2, name: 'Krakow', vacanciesCount: 1 }
+//   ]
+// }));
 
-vi.mock('../data/categories', () => ({
-  jobCategories: [
-    { id: 1, name: 'IT', vacanciesCount: 2 }
-  ]
-})); 
+// vi.mock('../data/categories', () => ({
+//   jobCategories: [
+//     { id: 1, name: 'IT', vacanciesCount: 2 }
+//   ]
+// })); 

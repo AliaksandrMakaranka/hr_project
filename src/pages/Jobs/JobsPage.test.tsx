@@ -4,127 +4,105 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from '../../theme';
 import JobsPage from './index';
 import { useVacancyFilters } from '../../hooks/useVacancyFilters';
-import { vi } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Mock the useVacancyFilters hook
 vi.mock('../../hooks/useVacancyFilters');
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  Link: ({ children, to }: { children: React.ReactNode; to: string }) =>
+    React.createElement('a', { href: to }, children)
+}));
 
 const mockVacancies = [
   {
     id: 1,
     title: 'Frontend Developer',
     company: 'Tech Corp',
-    category: {
-      id: 1,
-      name: 'IT',
-      description: 'Работа в IT-сфере',
-      icon: '💻',
-      popularSkills: ['React', 'TypeScript', 'JavaScript'],
-      averageSalary: '3500-5000 PLN'
-    },
+    salary: '5000-7000 PLN',
     city: {
       id: 1,
-      name: 'Warsaw',
+      name: 'Варшава',
       coordinates: { lat: 52.2297, lng: 21.0122 }
     },
-    salary: '3000-4000 PLN',
-    employmentType: 'Full-time',
-    description: 'Looking for a skilled frontend developer'
-  },
-  {
-    id: 2,
-    title: 'Backend Developer',
-    company: 'Tech Corp',
     category: {
       id: 1,
       name: 'IT',
-      description: 'Работа в IT-сфере',
-      icon: '💻',
-      popularSkills: ['Node.js', 'Python', 'Java'],
-      averageSalary: '3500-5000 PLN'
+      description: 'IT вакансии',
+      icon: '💻'
     },
-    city: {
-      id: 2,
-      name: 'Krakow',
-      coordinates: { lat: 50.0647, lng: 19.9450 }
-    },
-    salary: '4000-5000 PLN',
-    employmentType: 'Full-time',
-    description: 'Looking for a skilled backend developer'
+    description: 'Frontend разработчик',
+    employmentType: 'Полная занятость',
+    createdAt: '2024-03-20'
   }
 ];
 
-const renderWithTheme = (component: React.ReactNode) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  );
-};
-
 describe('JobsPage', () => {
   beforeEach(() => {
-    (useVacancyFilters as any).mockReturnValue({
+    (useVacancyFilters as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       filteredVacancies: mockVacancies,
-      categoryId: null,
-      cityId: null
+      categoryId: mockVacancies[0].category.id,
+      cityId: mockVacancies[0].city.id
     });
+    mockNavigate.mockClear();
   });
 
-  it('renders the page with all vacancies when no filters are applied', () => {
-    renderWithTheme(<JobsPage />);
-    
-    expect(screen.getByText('Все вакансии')).toBeInTheDocument();
-    expect(screen.getByText('Найдено вакансий: 2')).toBeInTheDocument();
+  it('renders vacancy cards', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <JobsPage />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByTestId('vacancy-title-1')).toHaveTextContent('Frontend Developer');
+    expect(screen.getByTestId('vacancy-company-1')).toHaveTextContent('Tech Corp');
+    expect(screen.getByTestId('vacancy-salary-1')).toHaveTextContent('5000-7000 PLN');
+    expect(screen.getByTestId('vacancy-city-1')).toHaveTextContent('Варшава');
   });
 
-  it('renders filtered vacancies when category filter is applied', () => {
-    (useVacancyFilters as any).mockReturnValue({
-      filteredVacancies: mockVacancies,
-      categoryId: 1,
-      cityId: null
-    });
-    renderWithTheme(<JobsPage />);
-    
-    expect(screen.getByText('Вакансии в категории "IT"')).toBeInTheDocument();
-    expect(screen.getByText('Frontend Developer')).toBeInTheDocument();
-    expect(screen.getByText('Backend Developer')).toBeInTheDocument();
+  it('renders vacancy details', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <JobsPage />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByTestId('vacancy-description-1')).toHaveTextContent('Frontend разработчик');
+    expect(screen.getByTestId('vacancy-employment-1')).toHaveTextContent('Полная занятость');
   });
 
-  it('renders vacancy details correctly', () => {
-    renderWithTheme(<JobsPage />);
-    
-    expect(screen.getByText('Frontend Developer')).toBeInTheDocument();
-    expect(screen.getByText('3000-4000 PLN')).toBeInTheDocument();
-    expect(screen.getByText('Looking for a skilled frontend developer')).toBeInTheDocument();
-    
-    // Check for multiple instances of labels and values
-    const categoryLabels = screen.getAllByText('Категория:');
-    const cityLabels = screen.getAllByText('Город:');
-    const employmentTypeLabels = screen.getAllByText('Тип занятости:');
-    
-    expect(categoryLabels).toHaveLength(2);
-    expect(cityLabels).toHaveLength(2);
-    expect(employmentTypeLabels).toHaveLength(2);
-    
-    expect(screen.getAllByText('IT')).toHaveLength(2);
-    expect(screen.getByText('Warsaw')).toBeInTheDocument();
-    expect(screen.getByText('Krakow')).toBeInTheDocument();
-    expect(screen.getAllByText('Full-time')).toHaveLength(2);
+  it('provides navigation links', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <JobsPage />
+      </ThemeProvider>
+    );
+
+    const viewButton = screen.getByText('Подробнее');
+    expect(viewButton).toHaveAttribute('href', '/vacancy/1');
+
+    const backButton = screen.getByText('← Назад');
+    backButton.click();
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+
+    const searchByCitiesButton = screen.getByText('Поиск по городам');
+    searchByCitiesButton.click();
+    expect(mockNavigate).toHaveBeenCalledWith('/cities');
   });
 
-  it('provides navigation links with correct attributes', () => {
-    renderWithTheme(<JobsPage />);
-    
-    const viewButtons = screen.getAllByText('Подробнее');
-    expect(viewButtons[0]).toHaveAttribute('href', '/vacancy/1');
-    expect(viewButtons[1]).toHaveAttribute('href', '/vacancy/2');
-  });
+  it('displays filter information', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <JobsPage />
+      </ThemeProvider>
+    );
 
-  it('handles navigation actions correctly', () => {
-    renderWithTheme(<JobsPage />);
-    
-    expect(screen.getByText('← Назад')).toBeInTheDocument();
-    expect(screen.getByText('Поиск по городам')).toBeInTheDocument();
+    expect(screen.getByTestId('vacancy-category-1')).toHaveTextContent('IT');
+    expect(screen.getByTestId('vacancy-city-1')).toHaveTextContent('Варшава');
   });
 }); 

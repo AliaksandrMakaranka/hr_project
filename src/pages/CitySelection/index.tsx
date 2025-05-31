@@ -29,7 +29,7 @@ import {
 } from './styles';
 
 // Исправляем проблему с иконками маркеров по умолчанию в Leaflet в проектах с Vite
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl;
 
 // Используем стандартные импорты для иконок
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -43,7 +43,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const CitySelectionPage: React.FC = () => {
-  const { citiesWithCounts } = useVacancyCounts();
+  const { citiesWithCounts, isLoading, error } = useVacancyCounts();
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -57,6 +57,23 @@ const CitySelectionPage: React.FC = () => {
   const handleMarkerClick = (cityId: number) => {
     navigate(ROUTES.CITY(cityId));
   };
+
+  if (isLoading) {
+    return (
+      <Container>
+        <PageTitle>Загрузка городов...</PageTitle>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <PageTitle>Ошибка при загрузке городов</PageTitle>
+        <p>{error.message}</p>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -74,9 +91,8 @@ const CitySelectionPage: React.FC = () => {
       <ContentWrapper>
         <CitiesList>
           {citiesWithCounts.map(city => (
-            // Убедитесь, что у города есть координаты перед отображением карточки
             city.coordinates && (
-              <CityCard key={city.id} href={ROUTES.CITY(city.id)}>
+              <CityCard key={city.id} to={ROUTES.CITY(city.id)}>
                 <CityName>{city.name}</CityName>
                 <VacancyCount>{city.vacanciesCount} вакансий</VacancyCount>
               </CityCard>
@@ -96,7 +112,6 @@ const CitySelectionPage: React.FC = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {citiesWithCounts.map(city => (
-              // Убедитесь, что у города есть координаты перед добавлением маркера
               city.coordinates && (
                 <Marker
                   key={city.id}

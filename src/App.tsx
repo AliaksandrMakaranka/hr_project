@@ -5,8 +5,10 @@ import { theme } from './theme';
 import { GlobalStyle } from './styles/global';
 import Navbar from './components/layout/Navbar';
 import HomePage from './pages/Home';
-import CitySelectionPage from './pages/CitySelection';
+import CitiesPage from './pages/Cities';
+import CityPage from './pages/City';
 import JobsPage from './pages/Jobs';
+import VacancyPage from './components/VacancyPage';
 import { ROUTES } from './constants/routes';
 
 const App: React.FC = () => {
@@ -18,9 +20,10 @@ const App: React.FC = () => {
         <main style={{ flex: 1, width: '100%' }}>
           <Routes>
             <Route path={ROUTES.HOME} element={<HomePage />} />
-            <Route path={ROUTES.CITIES} element={<CitySelectionPage />} />
-            <Route path="/city/:cityId" element={<JobsPage />} />
-            <Route path="/category/:categoryId" element={<JobsPage />} />
+            <Route path={ROUTES.CITIES} element={<CitiesPage />} />
+            <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
+            <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
+            <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
           </Routes>
         </main>
       </Router>

@@ -4,10 +4,20 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from '../../theme';
 import CitySelectionPage from './index';
 import { useVacancyCounts } from '../../hooks/useVacancyCounts';
-import { vi } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Mock the useVacancyCounts hook
 vi.mock('../../hooks/useVacancyCounts');
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  Link: ({ children, to }: { children: React.ReactNode; to: string }) =>
+    React.createElement('a', { href: to }, children)
+}));
 
 // Mock react-leaflet
 vi.mock('react-leaflet', () => ({
@@ -21,56 +31,55 @@ vi.mock('react-leaflet', () => ({
 const mockCities = [
   {
     id: 1,
-    name: 'Warsaw',
-    vacanciesCount: 5,
-    coordinates: { lat: 52.2297, lng: 21.0122 }
-  },
-  {
-    id: 2,
-    name: 'Krakow',
-    vacanciesCount: 3,
-    coordinates: { lat: 50.0647, lng: 19.9450 }
+    name: 'Варшава',
+    coordinates: { lat: 52.2297, lng: 21.0122 },
+    vacanciesCount: 10
   }
 ];
 
-const renderWithTheme = (component: React.ReactNode) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  );
-};
-
 describe('CitySelectionPage', () => {
   beforeEach(() => {
-    (useVacancyCounts as any).mockReturnValue({
-      citiesWithCounts: mockCities
+    (useVacancyCounts as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      citiesWithCounts: mockCities,
+      categoriesWithCounts: []
     });
+    mockNavigate.mockClear();
   });
 
-  it('renders the page title', () => {
-    renderWithTheme(<CitySelectionPage />);
-    expect(screen.getByText('Выберите город')).toBeInTheDocument();
+  it('renders city cards', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <CitySelectionPage />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByText('Варшава')).toBeInTheDocument();
+    expect(screen.getByText('10 вакансий')).toBeInTheDocument();
   });
 
-  it('displays city cards with correct information', () => {
-    renderWithTheme(<CitySelectionPage />);
-    
-    expect(screen.getByText('Warsaw')).toBeInTheDocument();
-    expect(screen.getByText('5 вакансий')).toBeInTheDocument();
-    expect(screen.getByText('Krakow')).toBeInTheDocument();
-    expect(screen.getByText('3 вакансий')).toBeInTheDocument();
-  });
+  it('renders map container', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <CitySelectionPage />
+      </ThemeProvider>
+    );
 
-  it('renders the map container', () => {
-    renderWithTheme(<CitySelectionPage />);
     expect(screen.getByTestId('map')).toBeInTheDocument();
   });
 
-  it('provides navigation buttons', () => {
-    renderWithTheme(<CitySelectionPage />);
-    
-    expect(screen.getByText('← Назад')).toBeInTheDocument();
-    expect(screen.getByText('Все вакансии')).toBeInTheDocument();
+  it('handles navigation', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <CitySelectionPage />
+      </ThemeProvider>
+    );
+
+    const backButton = screen.getByText('← Назад');
+    backButton.click();
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+
+    const allVacanciesButton = screen.getByText('Все вакансии');
+    allVacanciesButton.click();
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 }); 

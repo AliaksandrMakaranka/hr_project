@@ -4,84 +4,86 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from '../../theme';
 import HomePage from './index';
 import { useVacancyCounts } from '../../hooks/useVacancyCounts';
-import { vi } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Mock the useVacancyCounts hook
 vi.mock('../../hooks/useVacancyCounts');
 
-const mockVacancyCounts = {
-  categoriesWithCounts: [
-    {
-      id: 1,
-      name: 'IT',
-      description: 'Работа в IT-сфере',
-      vacanciesCount: 2,
-      icon: '💻',
-      popularSkills: ['React', 'TypeScript', 'JavaScript'],
-      averageSalary: '3500-5000 PLN',
-      subcategories: [
-        { id: 101, name: 'Frontend', vacanciesCount: 1 },
-        { id: 102, name: 'Backend', vacanciesCount: 1 }
-      ]
-    }
-  ],
-  citiesWithCounts: [
-    {
-      id: 1,
-      name: 'Warsaw',
-      vacanciesCount: 1,
-      coordinates: { lat: 52.2297, lng: 21.0122 }
-    }
-  ]
-};
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  Link: ({ children, to }: { children: React.ReactNode; to: string }) =>
+    React.createElement('a', { href: to }, children)
+}));
 
-const renderWithTheme = (component: React.ReactNode) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  );
-};
+const mockCategories = [
+  {
+    id: 1,
+    name: 'IT',
+    description: 'IT вакансии',
+    icon: '💻',
+    vacanciesCount: 10,
+    averageSalary: '5000 PLN',
+    popularSkills: ['React', 'TypeScript']
+  }
+];
+
+const mockCities = [
+  {
+    id: 1,
+    name: 'Варшава',
+    coordinates: { lat: 52.2297, lng: 21.0122 },
+    vacanciesCount: 10
+  }
+];
 
 describe('HomePage', () => {
   beforeEach(() => {
-    (useVacancyCounts as any).mockReturnValue(mockVacancyCounts);
+    (useVacancyCounts as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      categoriesWithCounts: mockCategories,
+      citiesWithCounts: mockCities
+    });
+    mockNavigate.mockClear();
   });
 
-  it('renders main page sections', () => {
-    renderWithTheme(<HomePage />);
-    
-    expect(screen.getByText('Найдите работу своей мечты в Польше')).toBeInTheDocument();
-    expect(screen.getByText('Поиск по городам')).toBeInTheDocument();
+  it('renders category cards', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <HomePage />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByTestId('category-name-1')).toHaveTextContent('IT');
+    expect(screen.getByTestId('category-description-1')).toHaveTextContent('IT вакансии');
+    expect(screen.getByTestId('category-vacancies-1')).toHaveTextContent('10');
+    expect(screen.getByTestId('category-salary-1')).toHaveTextContent('5000 PLN');
   });
 
-  it('displays essential category information', () => {
-    renderWithTheme(<HomePage />);
-    
-    expect(screen.getByText('IT')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('Вакансий')).toBeInTheDocument();
-    expect(screen.getByText('3500-5000 PLN')).toBeInTheDocument();
-    expect(screen.getByText('Средняя ЗП')).toBeInTheDocument();
-    expect(screen.getByText('React')).toBeInTheDocument();
-    expect(screen.getByText('TypeScript')).toBeInTheDocument();
-    expect(screen.getByText('JavaScript')).toBeInTheDocument();
+  it('renders city cards', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <HomePage />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByText(/Варшава/i)).toBeInTheDocument();
+    expect(screen.getByText(/10 вакансий/i)).toBeInTheDocument();
   });
 
-  it('displays essential city information', () => {
-    renderWithTheme(<HomePage />);
-    
-    expect(screen.getByText('Warsaw')).toBeInTheDocument();
-    expect(screen.getByText('1 вакансий')).toBeInTheDocument();
-  });
+  it('provides navigation links', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <HomePage />
+      </ThemeProvider>
+    );
 
-  it('provides correct navigation links', () => {
-    renderWithTheme(<HomePage />);
-    
-    const categoryLink = screen.getByText('Смотреть вакансии');
+    const categoryLink = screen.getByText(/Смотреть вакансии/i);
     expect(categoryLink).toHaveAttribute('href', '/category/1');
-    
-    const cityLink = screen.getByText('Warsaw').closest('a');
+
+    const cityLink = screen.getByText(/Варшава/i).closest('a');
     expect(cityLink).toHaveAttribute('href', '/city/1');
   });
 }); 

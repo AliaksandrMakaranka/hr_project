@@ -1,6 +1,7 @@
 import type { Vacancy } from '../types/vacancy';
 import type { City } from '../types/city';
 import type { JobCategory } from '../types/jobCategory';
+import { vacancies } from '../data/vacancies';
 
 /**
  * Фильтрует вакансии по категории и городу
@@ -64,7 +65,7 @@ export const updateCategoriesWithVacancyCounts = (
 ): JobCategory[] => {
   return categories.map(category => ({
     ...category,
-    vacanciesCount: countVacanciesByCategory(vacancies, category.id)
+    vacanciesCount: vacancies.filter(v => v.category.id === category.id).length
   }));
 };
 
@@ -78,8 +79,12 @@ export const updateCitiesWithVacancyCounts = (
   cities: City[],
   vacancies: Vacancy[]
 ): City[] => {
-  return cities.map(city => ({
-    ...city,
-    vacanciesCount: countVacanciesByCity(vacancies, city.id)
-  }));
+  return cities.map(city => {
+    const cityVacancies = vacancies.filter(v => v.city.id === city.id);
+    return {
+      ...city,
+      vacanciesCount: cityVacancies.length,
+      vacancies: cityVacancies
+    };
+  });
 }; 

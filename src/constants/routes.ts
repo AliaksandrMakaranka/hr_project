@@ -4,9 +4,9 @@
 export const ROUTES = {
   HOME: '/',
   CITIES: '/cities',
-  CITY: (id: number) => `/city/${id}`,
-  CATEGORY: (id: number) => `/category/${id}`,
-  VACANCY: (id: number) => `/vacancy/${id}`,
+  CITY: (id: string | number) => `/city/${id}`,
+  CATEGORY: (id: string | number) => `/category/${id}`,
+  VACANCY: (id: string | number) => `/vacancy/${id}`,
   ABOUT: '/about'
 } as const;
 

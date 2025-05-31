@@ -8,15 +8,14 @@
  * 4. Форму отклика на вакансию
  * 
  * @component
- * @param {Object} props - Свойства компонента
- * @param {number} props.vacancyId - ID вакансии
  * @returns {JSX.Element} Страница с детальной информацией о вакансии
  */
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { vacancies } from '../data';
 import { useParams, useNavigate } from 'react-router-dom';
+import { ROUTES, NAVIGATION } from '../constants/routes';
 
 // Стилизованные компоненты
 const Container = styled.div`
@@ -154,123 +153,6 @@ const ApplyButton = styled.button`
   }
 `;
 
-const Modal = styled.div<{ isOpen: boolean }>`
-  display: ${props => props.isOpen ? 'flex' : 'none'};
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: clamp(1rem, 5vw, 2rem);
-`;
-
-const ModalContent = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: clamp(1.5rem, 4vw, 2rem);
-  width: 100%;
-  max-width: min(500px, 90vw);
-  position: relative;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: clamp(0.75rem, 2vw, 1rem);
-  right: clamp(0.75rem, 2vw, 1rem);
-  background: none;
-  border: none;
-  font-size: clamp(1.25rem, 3vw, 1.5rem);
-  cursor: pointer;
-  color: #aaa;
-  padding: 0.5rem;
-  
-  &:hover {
-    color: #777;
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1rem, 3vw, 1.5rem);
-  width: 100%;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-  color: #333;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-`;
-
-const Input = styled.input`
-  padding: clamp(0.75rem, 2vw, 1rem);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-    border-color: #1976d2;
-  }
-`;
-
-const TextArea = styled.textarea`
-  padding: clamp(0.75rem, 2vw, 1rem);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  min-height: clamp(100px, 20vw, 150px);
-  resize: vertical;
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-    border-color: #1976d2;
-  }
-`;
-
-const FileInput = styled.input`
-  padding: clamp(0.75rem, 2vw, 1rem);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  width: 100%;
-  
-  &:focus {
-    outline: none;
-    border-color: #1976d2;
-  }
-`;
-
-const SubmitButton = styled.button`
-  background: #1976d2;
-  color: white;
-  border: none;
-  padding: clamp(0.75rem, 2vw, 1rem);
-  border-radius: 8px;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  width: 100%;
-  
-  &:hover {
-    background: #1565c0;
-  }
-`;
-
 const NavButtonsContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -294,78 +176,53 @@ const NavLinkButton = styled.button`
 `;
 
 const VacancyPage: React.FC = () => {
-  const { vacancyId } = useParams<{ vacancyId: string }>();
-  const vacancyIdNumber = vacancyId ? parseInt(vacancyId, 10) : undefined;
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-    telegram: '',
-    resume: null as File | null
-  });
-
-  const vacancy = vacancies.find(v => v.id === vacancyIdNumber);
-
-  if (!vacancy) {
-    return <div>Вакансия не найдена</div>;
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: '',
-      telegram: '',
-      resume: null as File | null
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    setIsModalOpen(false);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({
-        ...prev,
-        resume: e.target.files![0]
-      }));
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  // Find the vacancy by ID
+  const vacancy = vacancies.find(v => v.id === Number(id));
+
+  useEffect(() => {
+    // Add console log for debugging
+    console.log('Vacancy ID:', id);
+    console.log('Found vacancy:', vacancy);
+  }, [id, vacancy]);
 
   const handleGoBack = () => {
     navigate(-1);
   };
 
   const handleGoToCities = () => {
-    navigate('/cities');
+    navigate(ROUTES.CITIES);
   };
+
+  // If vacancy is not found, show error message
+  if (!vacancy) {
+    return (
+      <Container>
+        <NavButtonsContainer>
+          <NavLinkButton onClick={handleGoBack}>
+            {NAVIGATION.BACK}
+          </NavLinkButton>
+        </NavButtonsContainer>
+        <Header>
+          <Title>Вакансия не найдена</Title>
+          <Description>
+            К сожалению, запрашиваемая вакансия не существует или была удалена.
+          </Description>
+        </Header>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <NavButtonsContainer>
         <NavLinkButton onClick={handleGoBack}>
-          Назад
+          {NAVIGATION.BACK}
         </NavLinkButton>
         <NavLinkButton onClick={handleGoToCities}>
-          Поиск по городам
+          {NAVIGATION.SEARCH_BY_CITIES}
         </NavLinkButton>
       </NavButtonsContainer>
 
@@ -439,84 +296,11 @@ const VacancyPage: React.FC = () => {
             </ContactInfo>
           </ContentSection>
 
-          <ApplyButton onClick={() => setIsModalOpen(true)}>
+          <ApplyButton onClick={() => alert('Функционал отклика на вакансию будет добавлен позже')}>
             Откликнуться на вакансию
           </ApplyButton>
         </div>
       </MainContent>
-
-      <Modal isOpen={isModalOpen} onClick={handleCloseModal}>
-        <ModalContent onClick={e => e.stopPropagation()}>
-          <CloseButton onClick={handleCloseModal}>&times;</CloseButton>
-          <SectionTitle>Отклик на вакансию</SectionTitle>
-          <Form onSubmit={handleSubmit}>
-            <FormGroup>
-              <Label>Имя</Label>
-              <Input
-                type="text"
-                required
-                value={formData.name}
-                onChange={handleInputChange}
-                name="name"
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Email (необязательно)</Label>
-              <Input
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                name="email"
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Телефон</Label>
-              <Input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={handleInputChange}
-                name="phone"
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Telegram (необязательно)</Label>
-              <Input
-                type="text"
-                value={formData.telegram}
-                onChange={handleInputChange}
-                name="telegram"
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Сопроводительное письмо (необязательно)</Label>
-              <TextArea
-                value={formData.message}
-                onChange={handleInputChange}
-                name="message"
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Резюме (необязательно)</Label>
-              <FileInput
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileChange}
-                name="resume"
-              />
-            </FormGroup>
-
-            <SubmitButton type="submit">
-              Отправить
-            </SubmitButton>
-          </Form>
-        </ModalContent>
-      </Modal>
     </Container>
   );
 };

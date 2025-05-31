@@ -4,7 +4,6 @@
  * Каждый город содержит:
  * - id: уникальный идентификатор
  * - name: название города
- * - vacanciesCount: количество вакансий
  * - coordinates: географические координаты (широта и долгота)
  * 
  * @module cities
@@ -16,7 +15,6 @@ export const cities: City[] = [
   {
     id: 1,
     name: 'Варшава',
-    vacanciesCount: 245,
     coordinates: {
       lat: 52.2297,
       lng: 21.0122
@@ -25,7 +23,6 @@ export const cities: City[] = [
   {
     id: 2,
     name: 'Краков',
-    vacanciesCount: 189,
     coordinates: {
       lat: 50.0647,
       lng: 19.9450
@@ -34,7 +31,6 @@ export const cities: City[] = [
   {
     id: 3,
     name: 'Вроцлав',
-    vacanciesCount: 156,
     coordinates: {
       lat: 51.1079,
       lng: 17.0385
@@ -43,7 +39,6 @@ export const cities: City[] = [
   {
     id: 4,
     name: 'Познань',
-    vacanciesCount: 132,
     coordinates: {
       lat: 52.4064,
       lng: 16.9252
@@ -52,7 +47,6 @@ export const cities: City[] = [
   {
     id: 5,
     name: 'Гданьск',
-    vacanciesCount: 98,
     coordinates: {
       lat: 54.3520,
       lng: 18.6466
@@ -61,7 +55,6 @@ export const cities: City[] = [
   {
     id: 6,
     name: 'Лодзь',
-    vacanciesCount: 87,
     coordinates: {
       lat: 51.7592,
       lng: 19.4559
