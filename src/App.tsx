@@ -10,6 +10,7 @@ import CityPage from './pages/City';
 import JobsPage from './pages/Jobs';
 import VacancyPage from './components/VacancyPage';
 import VacanciesPage from './pages/Vacancies';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import { ROUTES } from './constants/routes';
 import Footer from './components/Footer';
 
@@ -27,6 +28,7 @@ const App: React.FC = () => {
             <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
             <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
             <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
+            <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
           </Routes>
         </main>
         <Footer />

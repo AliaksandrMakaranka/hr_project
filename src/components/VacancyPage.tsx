@@ -368,16 +368,6 @@ const VacancyPage: React.FC = () => {
                       <ContactValue>{vacancy.contact.phone}</ContactValue>
                     </ContactItem>
                   )}
-                  {vacancy.contact.website && (
-                    <ContactItem>
-                      <ContactLabel>Веб-сайт</ContactLabel>
-                      <ContactValue>
-                        <a href={vacancy.contact.website} target="_blank" rel="noopener noreferrer">
-                          {vacancy.contact.website}
-                        </a>
-                      </ContactValue>
-                    </ContactItem>
-                  )}
                 </>
               )}
               {vacancy.workingHours && (
@@ -385,10 +375,10 @@ const VacancyPage: React.FC = () => {
                   <WorkingHoursTitle>График работы</WorkingHoursTitle>
                   <WorkingHoursList>
                     <WorkingHoursItem>
-                      Время: {vacancy.workingHours.start} - {vacancy.workingHours.end}
+                      Время: {vacancy.workingHours?.from} - {vacancy.workingHours?.to}
                     </WorkingHoursItem>
                     <WorkingHoursItem>
-                      Дни: {vacancy.workingHours.days.join(', ')}
+                      Дни: {vacancy.workingHours?.days?.join(', ')}
                     </WorkingHoursItem>
                   </WorkingHoursList>
                 </WorkingHoursContainer>

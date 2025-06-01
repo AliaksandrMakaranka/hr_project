@@ -10,7 +10,8 @@ export const ROUTES = {
   CITIES: '/cities',
   CITY: (id: string | number) => `/cities/${id}`,
   ABOUT: '/about',
-  CONTACT: '/contact'
+  CONTACT: '/contact',
+  PRIVACY_POLICY: '/privacy-policy'
 } as const;
 
 /**
