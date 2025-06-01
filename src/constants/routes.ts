@@ -4,14 +4,15 @@
 export const ROUTES = {
   HOME: '/',
   VACANCIES: '/vacancies',
+  CITIES: '/cities',
   CATEGORIES: '/categories',
   CATEGORY: (id: string | number) => `/categories/${id}`,
   VACANCY: (id: string | number) => `/vacancies/${id}`,
-  CITIES: '/cities',
   CITY: (id: string | number) => `/cities/${id}`,
   ABOUT: '/about',
   CONTACT: '/contact',
-  PRIVACY_POLICY: '/privacy-policy'
+  PRIVACY_POLICY: '/privacy-policy',
+  TERMS_OF_USE: '/terms-of-use'
 } as const;
 
 /**

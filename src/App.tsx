@@ -11,6 +11,7 @@ import JobsPage from './pages/Jobs';
 import VacancyPage from './components/VacancyPage';
 import VacanciesPage from './pages/Vacancies';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 import { ROUTES } from './constants/routes';
 import Footer from './components/Footer';
 
@@ -19,19 +20,22 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Router>
-        <Navbar />
-        <main style={{ flex: 1, width: '100%' }}>
-          <Routes>
-            <Route path={ROUTES.HOME} element={<HomePage />} />
-            <Route path={ROUTES.VACANCIES} element={<VacanciesPage />} />
-            <Route path={ROUTES.CITIES} element={<CitiesPage />} />
-            <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
-            <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
-            <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
-            <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
-          </Routes>
-        </main>
-        <Footer />
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Navbar />
+          <main style={{ flex: 1, width: '100%' }}>
+            <Routes>
+              <Route path={ROUTES.HOME} element={<HomePage />} />
+              <Route path={ROUTES.VACANCIES} element={<VacanciesPage />} />
+              <Route path={ROUTES.CITIES} element={<CitiesPage />} />
+              <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
+              <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
+              <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
+              <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+              <Route path={ROUTES.TERMS_OF_USE} element={<TermsOfUse />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </Router>
     </ThemeProvider>
   );

@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
         <FooterSection>
           <FooterTitle>Правовая информация</FooterTitle>
           <FooterLink as={Link} to={ROUTES.PRIVACY_POLICY}>Политика конфиденциальности</FooterLink>
-          <FooterLink href="/terms">Условия использования</FooterLink>
+          <FooterLink as={Link} to={ROUTES.TERMS_OF_USE}>Условия использования</FooterLink>
           <FooterLink href="/cookies">Политика использования файлов cookie</FooterLink>
         </FooterSection>
       </FooterContent>
