@@ -9,7 +9,9 @@ import CitiesPage from './pages/Cities';
 import CityPage from './pages/City';
 import JobsPage from './pages/Jobs';
 import VacancyPage from './components/VacancyPage';
+import VacanciesPage from './pages/Vacancies';
 import { ROUTES } from './constants/routes';
+import Footer from './components/Footer';
 
 const App: React.FC = () => {
   return (
@@ -20,12 +22,14 @@ const App: React.FC = () => {
         <main style={{ flex: 1, width: '100%' }}>
           <Routes>
             <Route path={ROUTES.HOME} element={<HomePage />} />
+            <Route path={ROUTES.VACANCIES} element={<VacanciesPage />} />
             <Route path={ROUTES.CITIES} element={<CitiesPage />} />
             <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
             <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
             <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
           </Routes>
         </main>
+        <Footer />
       </Router>
     </ThemeProvider>
   );

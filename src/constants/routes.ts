@@ -3,11 +3,14 @@
  */
 export const ROUTES = {
   HOME: '/',
+  VACANCIES: '/vacancies',
+  CATEGORIES: '/categories',
+  CATEGORY: (id: string | number) => `/categories/${id}`,
+  VACANCY: (id: string | number) => `/vacancies/${id}`,
   CITIES: '/cities',
-  CITY: (id: string | number) => `/city/${id}`,
-  CATEGORY: (id: string | number) => `/category/${id}`,
-  VACANCY: (id: string | number) => `/vacancy/${id}`,
-  ABOUT: '/about'
+  CITY: (id: string | number) => `/cities/${id}`,
+  ABOUT: '/about',
+  CONTACT: '/contact'
 } as const;
 
 /**

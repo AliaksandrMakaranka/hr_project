@@ -13,7 +13,7 @@
 
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { vacancies } from '../data';
+import { vacancies } from '../data/vacancies';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ROUTES, NAVIGATION } from '../constants/routes';
 import { logger } from '../utils/logger';
@@ -137,6 +137,45 @@ const ContactValue = styled.div`
   font-size: clamp(0.875rem, 2vw, 1rem);
 `;
 
+const TagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const Tag = styled.span`
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+`;
+
+const WorkingHoursContainer = styled.div`
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+`;
+
+const WorkingHoursTitle = styled.h3`
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+`;
+
+const WorkingHoursList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const WorkingHoursItem = styled.li`
+  color: #666;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+`;
+
 const ApplyButton = styled.button`
   background: #1976d2;
   color: white;
@@ -181,16 +220,14 @@ const VacancyPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Find the vacancy by ID with proper type checking
-  const vacancy = vacancies.find(v => v.id === Number(id));
+  const vacancy = vacancies.find(v => v.id === id);
 
   useEffect(() => {
     logger.debug('VacancyPage mounted', { id, vacancyFound: !!vacancy });
-    
     if (!id) {
       logger.warn('No vacancy ID provided');
       return;
     }
-
     if (!vacancy) {
       logger.error('Vacancy not found', { id });
     }
@@ -206,7 +243,6 @@ const VacancyPage: React.FC = () => {
     navigate(ROUTES.CITIES);
   };
 
-  // If vacancy is not found, show error message
   if (!vacancy) {
     return (
       <Container>
@@ -225,7 +261,6 @@ const VacancyPage: React.FC = () => {
     );
   }
 
-  // Ensure all required arrays exist before mapping
   const responsibilities = vacancy.responsibilities || [];
   const requirements = vacancy.requirements || [];
   const benefits = vacancy.benefits || [];
@@ -245,6 +280,13 @@ const VacancyPage: React.FC = () => {
         <Title>{vacancy.title}</Title>
         <CompanyInfo>{vacancy.company}</CompanyInfo>
         <Salary>{vacancy.salary}</Salary>
+        {vacancy.tags && vacancy.tags.length > 0 && (
+          <TagsContainer>
+            {vacancy.tags.map((tag, index) => (
+              <Tag key={`tag-${index}`}>{tag}</Tag>
+            ))}
+          </TagsContainer>
+        )}
       </Header>
 
       <MainContent>
@@ -284,7 +326,7 @@ const VacancyPage: React.FC = () => {
 
         <div>
           <ContentSection>
-            <SectionTitle>Информация о работодателе</SectionTitle>
+            <SectionTitle>Информация о вакансии</SectionTitle>
             <ContactInfo>
               <ContactItem>
                 <ContactLabel>Компания</ContactLabel>
@@ -295,9 +337,62 @@ const VacancyPage: React.FC = () => {
                 <ContactValue>{vacancy.city?.name || 'Не указан'}</ContactValue>
               </ContactItem>
               <ContactItem>
-                <ContactLabel>Тип занятости</ContactLabel>
-                <ContactValue>{vacancy.employmentType}</ContactValue>
+                <ContactLabel>Категория</ContactLabel>
+                <ContactValue>{vacancy.category?.name || 'Не указана'}</ContactValue>
               </ContactItem>
+              <ContactItem>
+                <ContactLabel>Тип занятости</ContactLabel>
+                <ContactValue>{vacancy.employmentType || 'Не указан'}</ContactValue>
+              </ContactItem>
+              <ContactItem>
+                <ContactLabel>Требуемый опыт</ContactLabel>
+                <ContactValue>{vacancy.experience || 'Не указан'}</ContactValue>
+              </ContactItem>
+              {vacancy.location?.address && (
+                <ContactItem>
+                  <ContactLabel>Адрес</ContactLabel>
+                  <ContactValue>{vacancy.location.address}</ContactValue>
+                </ContactItem>
+              )}
+              {vacancy.contact && (
+                <>
+                  {vacancy.contact.email && (
+                    <ContactItem>
+                      <ContactLabel>Email</ContactLabel>
+                      <ContactValue>{vacancy.contact.email}</ContactValue>
+                    </ContactItem>
+                  )}
+                  {vacancy.contact.phone && (
+                    <ContactItem>
+                      <ContactLabel>Телефон</ContactLabel>
+                      <ContactValue>{vacancy.contact.phone}</ContactValue>
+                    </ContactItem>
+                  )}
+                  {vacancy.contact.website && (
+                    <ContactItem>
+                      <ContactLabel>Веб-сайт</ContactLabel>
+                      <ContactValue>
+                        <a href={vacancy.contact.website} target="_blank" rel="noopener noreferrer">
+                          {vacancy.contact.website}
+                        </a>
+                      </ContactValue>
+                    </ContactItem>
+                  )}
+                </>
+              )}
+              {vacancy.workingHours && (
+                <WorkingHoursContainer>
+                  <WorkingHoursTitle>График работы</WorkingHoursTitle>
+                  <WorkingHoursList>
+                    <WorkingHoursItem>
+                      Время: {vacancy.workingHours.start} - {vacancy.workingHours.end}
+                    </WorkingHoursItem>
+                    <WorkingHoursItem>
+                      Дни: {vacancy.workingHours.days.join(', ')}
+                    </WorkingHoursItem>
+                  </WorkingHoursList>
+                </WorkingHoursContainer>
+              )}
             </ContactInfo>
           </ContentSection>
 
