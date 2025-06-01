@@ -92,7 +92,7 @@ const JobsPage: React.FC = () => {
     navigate(ROUTES.CITIES);
   };
 
-  const handleVacancyClick = (vacancyId: number) => {
+  const handleVacancyClick = (vacancyId: string) => {
     logger.debug('Vacancy clicked', { vacancyId });
   };
 

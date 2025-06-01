@@ -12,23 +12,71 @@
  * - responsibilities: список обязанностей
  * - requirements: список требований
  * - benefits: список преимуществ
- * - employer: информация о работодателе
  * - employmentType: тип занятости
  * - experience: требуемый опыт
- * - education: требуемое образование
- * - createdAt: дата создания вакансии
  * 
  * @module vacancies
  */
 
-import type { Vacancy } from '../../types';
+import type { Vacancy } from '../../types/vacancy';
 import { cities } from '../cities';
 import { jobCategories } from '../categories';
 
 export const vacancies: Vacancy[] = [
+  // Тестовая вакансия с новыми полями
+  {
+    id: 'test-1',
+    title: 'Старший разработчик React',
+    company: 'Tech Solutions Poland',
+    salary: '15000-20000 PLN',
+    description: 'Мы ищем опытного React разработчика для работы над крупными проектами. Требуется глубокое понимание React, Redux, TypeScript и современных практик разработки.',
+    experience: 'от 3 лет',
+    employmentType: 'full-time',
+    city: cities[0], // Варшава
+    category: jobCategories.find(c => c.id === 1)!, // IT
+    responsibilities: [
+      'Разработка новых функций и компонентов',
+      'Оптимизация производительности приложения',
+      'Код ревью и менторинг младших разработчиков',
+      'Участие в планировании спринтов'
+    ],
+    requirements: [
+      'Опыт работы с React от 3 лет',
+      'Знание TypeScript',
+      'Опыт работы с Redux или другими state management решениями',
+      'Понимание принципов REST API'
+    ],
+    benefits: [
+      'Конкурентная зарплата',
+      'Гибкий график работы',
+      'Удаленная работа',
+      'Медицинская страховка',
+      'Спортивный абонемент'
+    ],
+    tags: ['React', 'TypeScript', 'Redux', 'Frontend'],
+    createdAt: new Date('2024-03-15'),
+    updatedAt: new Date('2024-03-20'),
+    isActive: true,
+    location: {
+      address: 'ul. Marszałkowska 1, 00-624 Warszawa',
+      coordinates: {
+        lat: 52.2297,
+        lng: 21.0122
+      }
+    },
+    contact: {
+      email: 'careers@techsolutions.pl',
+      phone: '+48 123 456 789'
+    },
+    workingHours: {
+      from: '09:00',
+      to: '17:00',
+      days: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница']
+    }
+  },
   // Строительство
   {
-    id: 1,
+    id: '1',
     title: 'Каменщик',
     company: 'BUDOWLANKA Sp. z o.o.',
     salary: '5500-7500 PLN',
@@ -53,19 +101,11 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Обучение и повышение квалификации'
     ],
-    employer: {
-      name: 'BUDOWLANKA Sp. z o.o.',
-      email: 'hr@budowlanka.pl',
-      phone: '+48 123 456 789',
-      website: 'www.budowlanka.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 2 лет',
-    education: 'Среднее специальное',
-    createdAt: '2024-03-15'
+    experience: 'от 2 лет'
   },
   {
-    id: 2,
+    id: '2',
     title: 'Отделочник',
     company: 'REMONTY POLSKA',
     salary: '5000-7000 PLN',
@@ -90,20 +130,12 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Обучение'
     ],
-    employer: {
-      name: 'REMONTY POLSKA',
-      email: 'kariera@remonty.pl',
-      phone: '+48 987 654 321',
-      website: 'www.remonty.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 1 года',
-    education: 'Среднее специальное',
-    createdAt: '2024-03-14'
+    experience: 'от 1 года'
   },
   // Общественное питание
   {
-    id: 3,
+    id: '3',
     title: 'Повар',
     company: 'RESTAURACJA POLSKA',
     salary: '4000-6000 PLN',
@@ -128,19 +160,11 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Официальное трудоустройство'
     ],
-    employer: {
-      name: 'RESTAURACJA POLSKA',
-      email: 'kariera@restauracja.pl',
-      phone: '+48 987 654 321',
-      website: 'www.restauracja.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 1 года',
-    education: 'Среднее специальное',
-    createdAt: '2024-03-14'
+    experience: 'от 1 года'
   },
   {
-    id: 4,
+    id: '4',
     title: 'Официант',
     company: 'HOTEL KRAKOW',
     salary: '3500-4500 PLN',
@@ -165,20 +189,12 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Официальное трудоустройство'
     ],
-    employer: {
-      name: 'HOTEL KRAKOW',
-      email: 'hr@hotelkrakow.pl',
-      phone: '+48 123 789 456',
-      website: 'www.hotelkrakow.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 6 месяцев',
-    education: 'Среднее',
-    createdAt: '2024-03-13'
+    experience: 'от 6 месяцев'
   },
   // Логистика
   {
-    id: 5,
+    id: '5',
     title: 'Водитель категории C',
     company: 'TRANSPORT POLSKA',
     salary: '4500-6500 PLN',
@@ -203,19 +219,11 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Обучение'
     ],
-    employer: {
-      name: 'TRANSPORT POLSKA',
-      email: 'hr@transport.pl',
-      phone: '+48 123 456 789',
-      website: 'www.transport.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 1 года',
-    education: 'Среднее',
-    createdAt: '2024-03-13'
+    experience: 'от 1 года'
   },
   {
-    id: 6,
+    id: '6',
     title: 'Курьер',
     company: 'DOSTAWA EXPRESS',
     salary: '4000-5000 PLN',
@@ -240,20 +248,12 @@ export const vacancies: Vacancy[] = [
       'Бонусы за доставку',
       'Страховка'
     ],
-    employer: {
-      name: 'DOSTAWA EXPRESS',
-      email: 'hr@dostawa.pl',
-      phone: '+48 789 123 456',
-      website: 'www.dostawa.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 6 месяцев',
-    education: 'Среднее',
-    createdAt: '2024-03-11'
+    experience: 'от 6 месяцев'
   },
   // Продажи
   {
-    id: 7,
+    id: '7',
     title: 'Продавец-консультант',
     company: 'SKLEP MODA',
     salary: '3500-4500 PLN',
@@ -278,20 +278,12 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Официальное трудоустройство'
     ],
-    employer: {
-      name: 'SKLEP MODA',
-      email: 'kariera@sklepmoda.pl',
-      phone: '+48 321 654 987',
-      website: 'www.sklepmoda.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 6 месяцев',
-    education: 'Среднее',
-    createdAt: '2024-03-10'
+    experience: 'от 6 месяцев'
   },
   // Производство
   {
-    id: 8,
+    id: '8',
     title: 'Оператор станков с ЧПУ',
     company: 'FABRYKA POLSKA',
     salary: '4000-5500 PLN',
@@ -316,20 +308,12 @@ export const vacancies: Vacancy[] = [
       'Обучение',
       'Возможность карьерного роста'
     ],
-    employer: {
-      name: 'FABRYKA POLSKA',
-      email: 'hr@fabryka.pl',
-      phone: '+48 654 321 987',
-      website: 'www.fabryka.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 1 года',
-    education: 'Среднее специальное',
-    createdAt: '2024-03-09'
+    experience: 'от 1 года'
   },
   // Дополнительные вакансии в Варшаве
   {
-    id: 9,
+    id: '9',
     title: 'Сварщик',
     company: 'METAL POLSKA',
     salary: '5000-7000 PLN',
@@ -354,20 +338,12 @@ export const vacancies: Vacancy[] = [
       'Обучение',
       'Возможность карьерного роста'
     ],
-    employer: {
-      name: 'METAL POLSKA',
-      email: 'hr@metal.pl',
-      phone: '+48 987 321 654',
-      website: 'www.metal.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 2 лет',
-    education: 'Среднее специальное',
-    createdAt: '2024-03-08'
+    experience: 'от 2 лет'
   },
   // Дополнительные вакансии в Кракове
   {
-    id: 10,
+    id: '10',
     title: 'Бариста',
     company: 'CAFE KRAKOW',
     salary: '3500-4500 PLN',
@@ -392,15 +368,7 @@ export const vacancies: Vacancy[] = [
       'Возможность карьерного роста',
       'Официальное трудоустройство'
     ],
-    employer: {
-      name: 'CAFE KRAKOW',
-      email: 'kariera@cafekrakow.pl',
-      phone: '+48 321 987 654',
-      website: 'www.cafekrakow.pl'
-    },
     employmentType: 'full-time',
-    experience: 'от 6 месяцев',
-    education: 'Среднее',
-    createdAt: '2024-03-07'
+    experience: 'от 6 месяцев'
   }
 ]; 

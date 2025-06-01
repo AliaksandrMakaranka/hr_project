@@ -27,7 +27,7 @@ export const filterVacancies = (
 
   return vacancies.filter(vacancy => {
     try {
-      if (!vacancy?.category?.id || !vacancy?.city?.id) {
+      if (!vacancy?.category || !vacancy?.city) {
         logger.warn('Invalid vacancy data', { vacancyId: vacancy?.id });
         return false;
       }

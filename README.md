@@ -102,3 +102,126 @@ npm test
 
 ## Лицензия
 MIT
+
+## Структура данных
+
+### Интерфейс Vacancy
+
+Интерфейс `Vacancy` описывает структуру данных вакансии:
+
+```typescript
+interface Vacancy {
+  id: string;                    // Уникальный идентификатор вакансии
+  title: string;                 // Название вакансии
+  company: string;               // Название компании
+  salary: string;                // Зарплата
+  description: string;           // Описание вакансии
+  experience: string;            // Требуемый опыт
+  employmentType: string;        // Тип занятости
+  city?: City;                   // Город (опционально)
+  category?: JobCategory;        // Категория (опционально)
+  responsibilities?: string[];   // Обязанности (опционально)
+  requirements?: string[];       // Требования (опционально)
+  benefits?: string[];          // Преимущества (опционально)
+  tags?: string[];              // Теги (опционально)
+  createdAt?: Date;             // Дата создания (опционально)
+  updatedAt?: Date;             // Дата обновления (опционально)
+  isActive?: boolean;           // Активна ли вакансия (опционально)
+  location?: {                  // Местоположение (опционально)
+    address: string;            // Адрес
+    coordinates: {              // Координаты
+      lat: number;              // Широта
+      lng: number;              // Долгота
+    };
+  };
+  contact?: {                   // Контактная информация (опционально)
+    email?: string;             // Email
+    phone?: string;             // Телефон
+  };
+  workingHours?: {              // Рабочие часы (опционально)
+    from: string;               // Время начала
+    to: string;                 // Время окончания
+    days?: string[];            // Дни недели
+  };
+}
+```
+
+#### Пример вакансии
+
+```typescript
+const vacancy: Vacancy = {
+  id: 'test-1',
+  title: 'Старший разработчик React',
+  company: 'Tech Solutions Poland',
+  salary: '15000-20000 PLN',
+  description: 'Мы ищем опытного React разработчика для работы над крупными проектами...',
+  experience: 'от 3 лет',
+  employmentType: 'full-time',
+  city: {
+    id: 1,
+    name: 'Варшава'
+  },
+  category: {
+    id: 1,
+    name: 'IT'
+  },
+  responsibilities: [
+    'Разработка новых функций и компонентов',
+    'Оптимизация производительности приложения'
+  ],
+  requirements: [
+    'Опыт работы с React от 3 лет',
+    'Знание TypeScript'
+  ],
+  benefits: [
+    'Конкурентная зарплата',
+    'Гибкий график работы'
+  ],
+  tags: ['React', 'TypeScript', 'Redux', 'Frontend'],
+  createdAt: new Date('2024-03-15'),
+  updatedAt: new Date('2024-03-20'),
+  isActive: true,
+  location: {
+    address: 'ul. Marszałkowska 1, 00-624 Warszawa',
+    coordinates: {
+      lat: 52.2297,
+      lng: 21.0122
+    }
+  },
+  contact: {
+    email: 'careers@techsolutions.pl',
+    phone: '+48 123 456 789'
+  },
+  workingHours: {
+    from: '09:00',
+    to: '17:00',
+    days: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница']
+  }
+};
+```
+
+## Установка и запуск
+
+1. Установите зависимости:
+```bash
+npm install
+```
+
+2. Запустите проект в режиме разработки:
+```bash
+npm run dev
+```
+
+3. Для сборки проекта:
+```bash
+npm run build
+```
+
+## Технологии
+
+- React
+- TypeScript
+- Styled Components
+- Vite
+- React Router
+- Framer Motion
