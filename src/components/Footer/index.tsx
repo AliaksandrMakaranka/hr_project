@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Container, FooterContent, FooterSection, FooterTitle, FooterLink, FooterText, SocialLinks, SocialLink } from './styles';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { ROUTES } from '../../constants/routes';
 
 const Footer: React.FC = () => {
   return (
@@ -29,11 +31,11 @@ const Footer: React.FC = () => {
 
         <FooterSection>
           <FooterTitle>Навигация</FooterTitle>
-          <FooterLink href="/">Главная</FooterLink>
-          <FooterLink href="/vacancies">Вакансии</FooterLink>
-          <FooterLink href="/categories">Категории</FooterLink>
-          <FooterLink href="/about">О нас</FooterLink>
-          <FooterLink href="/contact">Контакты</FooterLink>
+          <FooterLink as={Link} to={ROUTES.HOME}>Главная</FooterLink>
+          <FooterLink as={Link} to={ROUTES.VACANCIES}>Вакансии</FooterLink>
+          <FooterLink as={Link} to={ROUTES.CATEGORIES}>Категории</FooterLink>
+          <FooterLink as={Link} to={ROUTES.ABOUT}>О нас</FooterLink>
+          <FooterLink as={Link} to={ROUTES.CONTACT}>Контакты</FooterLink>
         </FooterSection>
 
         <FooterSection>
@@ -46,8 +48,8 @@ const Footer: React.FC = () => {
 
         <FooterSection>
           <FooterTitle>Правовая информация</FooterTitle>
-          <FooterLink href="/privacy">Политика конфиденциальности</FooterLink>
-          <FooterLink href="/terms">Условия использования</FooterLink>
+          <FooterLink as={Link} to={ROUTES.PRIVACY_POLICY}>Политика конфиденциальности</FooterLink>
+          <FooterLink as={Link} to={ROUTES.TERMS_OF_USE}>Условия использования</FooterLink>
           <FooterLink href="/cookies">Политика использования файлов cookie</FooterLink>
         </FooterSection>
       </FooterContent>
