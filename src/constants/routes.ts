@@ -12,7 +12,8 @@ export const ROUTES = {
   ABOUT: '/about',
   CONTACT: '/contact',
   PRIVACY_POLICY: '/privacy-policy',
-  TERMS_OF_USE: '/terms-of-use'
+  TERMS_OF_USE: '/terms-of-use',
+  COOKIE_POLICY: '/cookie-policy'
 } as const;
 
 /**
