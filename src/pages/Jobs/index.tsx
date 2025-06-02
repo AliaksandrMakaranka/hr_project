@@ -97,11 +97,6 @@ const JobsPage: React.FC = () => {
     navigate(-1);
   };
 
-  const handleSearchByCities = () => {
-    logger.debug('Navigating to cities page');
-    navigate(ROUTES.CITIES);
-  };
-
   const handleVacancyClick = (vacancyId: number) => {
     logger.debug('Vacancy clicked', { vacancyId });
   };
@@ -111,9 +106,6 @@ const JobsPage: React.FC = () => {
       <NavButtonsContainer>
         <NavLinkButton onClick={handleGoBack}>
           {NAVIGATION.BACK}
-        </NavLinkButton>
-        <NavLinkButton onClick={handleSearchByCities}>
-          {NAVIGATION.SEARCH_BY_CITIES}
         </NavLinkButton>
       </NavButtonsContainer>
 

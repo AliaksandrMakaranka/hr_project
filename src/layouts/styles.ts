@@ -1,43 +1,59 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const Container = styled.div`
+export const Container = styled.header`
+  background-color: ${({ theme }) => theme.colors.background.main};
+  box-shadow: ${({ theme }) => theme.shadows.medium};
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0 ${({ theme }) => theme.spacing.lg};
+  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
-  height: 80px;
-  background: #000;
-  position: sticky;
-  top: 0;
-  z-index: 999;
+`;
+
+export const LeftSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
+export const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 export const Logo = styled(Link)`
-  color: #fff;
+  color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
+  font-family: ${({ theme }) => theme.fonts.heading};
 `;
 
-export const NavLinks = styled.div`
+export const NavLinks = styled.nav`
   display: flex;
+  gap: ${({ theme }) => theme.spacing.md};
   align-items: center;
-  gap: 2rem;
 
-  @media screen and (max-width: 768px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     display: none;
   }
 `;
 
 export const NavLink = styled(Link)<{ $active?: boolean }>`
-  color: #fff;
+  color: ${({ theme, $active }) => 
+    $active ? theme.colors.primary : theme.colors.textSecondary};
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-bottom: ${props => props.$active ? '2px solid #01bf71' : 'none'};
+  font-size: 1rem;
+  padding: 0.5rem;
+  transition: color ${({ theme }) => theme.transitions.default};
 
   &:hover {
-    color: #01bf71;
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -45,38 +61,39 @@ export const MobileMenuButton = styled.button`
   display: none;
   background: none;
   border: none;
-  color: #fff;
   font-size: 1.5rem;
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  padding: 0.5rem;
 
-  @media screen and (max-width: 768px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     display: block;
   }
 `;
 
 export const MobileMenu = styled.div<{ $isOpen: boolean }>`
-  display: ${props => props.$isOpen ? 'flex' : 'none'};
-  flex-direction: column;
-  position: absolute;
+  display: none;
+  position: fixed;
   top: 80px;
   left: 0;
   right: 0;
-  background: #000;
-  padding: 1rem;
-  gap: 1rem;
+  background: ${({ theme }) => theme.colors.background.main};
+  padding: ${({ theme }) => theme.spacing.md};
+  box-shadow: ${({ theme }) => theme.shadows.medium};
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.md};
 
-  @media screen and (min-width: 769px) {
-    display: none;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
   }
 `;
 
-export const MobileNavLink = styled(Link)<{ $active?: boolean }>`
-  color: #fff;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-bottom: ${props => props.$active ? '2px solid #01bf71' : 'none'};
+export const MobileNavLink = styled(NavLink)`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.md};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 
-  &:hover {
-    color: #01bf71;
+  &:last-child {
+    border-bottom: none;
   }
 `; 

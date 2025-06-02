@@ -27,10 +27,6 @@ const CityPage: React.FC = () => {
     navigate(-1);
   };
 
-  const handleGoToAllVacancies = () => {
-    navigate(ROUTES.HOME);
-  };
-
   if (isLoading) {
     return (
       <Container>
@@ -58,9 +54,6 @@ const CityPage: React.FC = () => {
           <NavLinkButton onClick={handleGoBack}>
             {NAVIGATION.BACK}
           </NavLinkButton>
-          <NavLinkButton onClick={handleGoToAllVacancies}>
-            {NAVIGATION.ALL_VACANCIES}
-          </NavLinkButton>
         </NavButtonsContainer>
         <PageTitle>Город не найден</PageTitle>
         <p>Город с указанным ID не существует.</p>
@@ -77,9 +70,6 @@ const CityPage: React.FC = () => {
           <NavLinkButton onClick={handleGoBack}>
             {NAVIGATION.BACK}
           </NavLinkButton>
-          <NavLinkButton onClick={handleGoToAllVacancies}>
-            {NAVIGATION.ALL_VACANCIES}
-          </NavLinkButton>
         </NavButtonsContainer>
         <PageTitle>Вакансии в городе {city.name}</PageTitle>
         <p>В данный момент нет доступных вакансий в этом городе.</p>
@@ -92,9 +82,6 @@ const CityPage: React.FC = () => {
       <NavButtonsContainer>
         <NavLinkButton onClick={handleGoBack}>
           {NAVIGATION.BACK}
-        </NavLinkButton>
-        <NavLinkButton onClick={handleGoToAllVacancies}>
-          {NAVIGATION.ALL_VACANCIES}
         </NavLinkButton>
       </NavButtonsContainer>
 

@@ -1,16 +1,13 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useVacancyCounts } from '../../hooks/useVacancyCounts';
-import { ROUTES, NAVIGATION } from '../../constants/routes';
+import { ROUTES } from '../../constants/routes';
 import {
   Container,
   PageTitle,
   CitiesList,
   CityCard,
   CityName,
-  VacancyCount,
-  NavButtonsContainer,
-  NavLinkButton
+  VacancyCount
 } from './styles';
 
 /**
@@ -19,15 +16,6 @@ import {
  */
 const CitiesPage: React.FC = () => {
   const { citiesWithCounts, isLoading, error } = useVacancyCounts();
-  const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
-  const handleGoToAllVacancies = () => {
-    navigate(ROUTES.HOME);
-  };
 
   if (isLoading) {
     return (
@@ -52,14 +40,6 @@ const CitiesPage: React.FC = () => {
   if (citiesWithVacancies.length === 0) {
     return (
       <Container>
-        <NavButtonsContainer>
-          <NavLinkButton onClick={handleGoBack}>
-            {NAVIGATION.BACK}
-          </NavLinkButton>
-          <NavLinkButton onClick={handleGoToAllVacancies}>
-            {NAVIGATION.ALL_VACANCIES}
-          </NavLinkButton>
-        </NavButtonsContainer>
         <PageTitle>Нет доступных городов</PageTitle>
         <p>В данный момент нет вакансий ни в одном городе.</p>
       </Container>
@@ -68,15 +48,6 @@ const CitiesPage: React.FC = () => {
 
   return (
     <Container>
-      <NavButtonsContainer>
-        <NavLinkButton onClick={handleGoBack}>
-          {NAVIGATION.BACK}
-        </NavLinkButton>
-        <NavLinkButton onClick={handleGoToAllVacancies}>
-          {NAVIGATION.ALL_VACANCIES}
-        </NavLinkButton>
-      </NavButtonsContainer>
-
       <PageTitle>Выберите город</PageTitle>
       
       <CitiesList>
