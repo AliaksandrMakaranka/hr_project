@@ -11,12 +11,13 @@
  * @returns {JSX.Element} Страница с детальной информацией о вакансии
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { vacancies } from '../data/vacancies';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ROUTES, NAVIGATION } from '../constants/routes';
 import { logger } from '../utils/logger';
+import { VacanciesRepository } from '../api';
+import type { Vacancy } from '../types/vacancy';
 
 // Стилизованные компоненты
 const Container = styled.div`
@@ -218,21 +219,38 @@ const NavLinkButton = styled.button`
 const VacancyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [vacancy, setVacancy] = useState<Vacancy | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Find the vacancy by ID with proper type checking
-  const vacancyId = id ? parseInt(id, 10) : undefined;
-  const vacancy = vacancyId !== undefined ? vacancies.find(v => v.id === vacancyId) : undefined;
+  const vacanciesRepository = new VacanciesRepository();
 
   useEffect(() => {
-    logger.debug('VacancyPage mounted', { id, vacancyFound: !!vacancy });
-    if (!id) {
-      logger.warn('No vacancy ID provided');
-      return;
-    }
-    if (!vacancy) {
-      logger.error('Vacancy not found', { id });
-    }
-  }, [id, vacancy]);
+    const fetchVacancy = async () => {
+      if (!id) {
+        logger.warn('No vacancy ID provided');
+        setError('No vacancy ID provided');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const vacancyId = parseInt(id, 10);
+        const vacancyData = await vacanciesRepository.getById(vacancyId);
+        setVacancy(vacancyData);
+        if (!vacancyData) {
+          setError('Vacancy not found');
+        }
+      } catch (err) {
+        logger.error('Error fetching vacancy', { error: err });
+        setError('Failed to load vacancy');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVacancy();
+  }, [id]);
 
   const handleGoBack = () => {
     logger.debug('Navigating back');
@@ -244,7 +262,30 @@ const VacancyPage: React.FC = () => {
     navigate(ROUTES.CITIES);
   };
 
-  if (!vacancy) {
+  const handleApply = async () => {
+    if (!vacancy) return;
+    
+    try {
+      await vacanciesRepository.apply(vacancy.id, {});
+      logger.info('Application submitted successfully', { vacancyId: vacancy.id });
+      // TODO: Show success message to user
+    } catch (err) {
+      logger.error('Error submitting application', { error: err });
+      // TODO: Show error message to user
+    }
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <Header>
+          <Title>Loading...</Title>
+        </Header>
+      </Container>
+    );
+  }
+
+  if (error || !vacancy) {
     return (
       <Container>
         <NavButtonsContainer>
@@ -255,7 +296,7 @@ const VacancyPage: React.FC = () => {
         <Header>
           <Title>Вакансия не найдена</Title>
           <Description>
-            К сожалению, запрашиваемая вакансия не существует или была удалена.
+            {error || 'К сожалению, запрашиваемая вакансия не существует или была удалена.'}
           </Description>
         </Header>
       </Container>
@@ -389,7 +430,7 @@ const VacancyPage: React.FC = () => {
 
           <ContentSection>
             <SectionTitle>Откликнуться на вакансию</SectionTitle>
-            <ApplyButton onClick={() => logger.info('Apply button clicked', { vacancyId: vacancy.id })}>
+            <ApplyButton onClick={handleApply}>
               Откликнуться
             </ApplyButton>
           </ContentSection>
