@@ -16,9 +16,15 @@ interface CategoryCardProps {
   onClick?: () => void;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick }) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <Icon>
         <img src={`/icons/${category.icon}.svg`} alt={category.title} />
       </Icon>

@@ -1,4 +1,4 @@
-// import React from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, Autoplay, Pagination, Parallax } from 'swiper/modules';
@@ -7,8 +7,24 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/pagination';
 import './ConstructionSection.css';
 
-const ConstructionSection = () => {
-  const projects = [
+interface Project {
+  image: string;
+  title: string;
+  description: string;
+}
+
+interface ConstructionSectionProps {
+  projects?: Project[];
+  title?: string;
+  onProjectClick?: (project: Project) => void;
+}
+
+const ConstructionSection: React.FC<ConstructionSectionProps> = ({
+  projects: customProjects,
+  title = 'Наши строительные проекты',
+  onProjectClick
+}) => {
+  const defaultProjects: Project[] = [
     {
       image: '/images/dom.jpg',
       title: 'Современное жилье',
@@ -31,6 +47,14 @@ const ConstructionSection = () => {
     }
   ];
 
+  const projects = customProjects || defaultProjects;
+
+  const handleProjectClick = (project: Project) => {
+    if (onProjectClick) {
+      onProjectClick(project);
+    }
+  };
+
   return (
     <section className="construction-section">
       <div className="container">
@@ -40,7 +64,7 @@ const ConstructionSection = () => {
           transition={{ duration: 0.6 }}
           className="section-title"
         >
-          Наши строительные проекты
+          {title}
         </motion.h2>
 
         <motion.div
@@ -66,7 +90,10 @@ const ConstructionSection = () => {
           >
             {projects.map((project, index) => (
               <SwiperSlide key={index}>
-                <div className="project-slide">
+                <div 
+                  className="project-slide"
+                  onClick={() => handleProjectClick(project)}
+                >
                   <div 
                     className="project-image"
                     style={{ backgroundImage: `url(${project.image})` }}

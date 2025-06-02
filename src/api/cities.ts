@@ -1,4 +1,4 @@
-import type { City } from '../types';
+import type { ApiResponse, CitiesResponse } from '../types/api';
 import { cities as mockCities } from '../data/cities';
 import { vacancies } from '../data/vacancies';
 import { updateCitiesWithVacancyCounts } from '@utils/filters';
@@ -6,18 +6,22 @@ import { logger } from '@utils/logger';
 
 /**
  * Получает список городов с количеством вакансий
- * @returns Promise с массивом городов
+ * @param page Номер страницы
+ * @param limit Количество элементов на странице
+ * @returns Promise с пагинированным ответом городов
  * @throws Error если не удалось получить данные
  */
-export const getCities = async (): Promise<City[]> => {
+export const getCities = async (page: number = 1, limit: number = 10): Promise<ApiResponse<CitiesResponse>> => {
   logger.debug('Fetching cities', {
+    page,
+    limit,
     mockCitiesCount: mockCities.length,
     vacanciesCount: vacancies.length
   });
 
   try {
     // В реальном приложении здесь был бы запрос к API
-    // const response = await fetch('/api/cities');
+    // const response = await fetch(`/api/cities?page=${page}&limit=${limit}`);
     // if (!response.ok) {
     //   throw new Error(`HTTP error! status: ${response.status}`);
     // }
@@ -29,10 +33,26 @@ export const getCities = async (): Promise<City[]> => {
       setTimeout(() => {
         try {
           const citiesWithCounts = updateCitiesWithVacancyCounts(mockCities, vacancies);
+          const total = citiesWithCounts.length;
+          const items = citiesWithCounts.slice((page - 1) * limit, page * limit);
+
           logger.debug('Cities fetched successfully', {
-            count: citiesWithCounts.length
+            count: items.length,
+            total,
+            page,
+            limit
           });
-          resolve(citiesWithCounts);
+
+          resolve({
+            data: {
+              items,
+              total,
+              page,
+              limit,
+              totalPages: Math.ceil(total / limit)
+            },
+            status: 200
+          });
         } catch (error) {
           logger.error('Error processing cities data', {
             error,

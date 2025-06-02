@@ -15,8 +15,8 @@ const CategoriesGrid: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoriesData = await categoriesRepository.getAll();
-        setCategories(categoriesData);
+        const { data } = await categoriesRepository.getAll();
+        setCategories(data.items);
       } catch (err) {
         logger.error('Error fetching categories', { error: err });
         setError('Failed to load categories');

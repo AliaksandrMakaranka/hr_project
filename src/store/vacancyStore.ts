@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { VacanciesRepository } from '../api';
 import type { Vacancy, City, JobCategory } from '../types';
+import type { VacancyApplicationData } from '../types/api';
 
 interface VacancyState {
   // State
@@ -64,10 +65,10 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
     
     try {
       const repository = new VacanciesRepository();
-      const vacancies = await repository.getAll();
+      const response = await repository.getAll();
       
       // Apply filters based on current city and category
-      const filteredVacancies = vacancies.filter(vacancy => {
+      const filteredVacancies = response.data.items.filter(vacancy => {
         const cityMatch = !currentCity || vacancy.city?.id === currentCity.id;
         const categoryMatch = !currentCategory || vacancy.category?.id === currentCategory.id;
         return cityMatch && categoryMatch;
@@ -87,9 +88,9 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
     
     try {
       const repository = new VacanciesRepository();
-      const vacancy = await repository.getById(id);
+      const response = await repository.getById(id);
       
-      if (!vacancy) {
+      if (!response.data) {
         set({ 
           error: 'Vacancy not found',
           loading: false,
@@ -98,7 +99,7 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
         return;
       }
       
-      set({ selectedVacancy: vacancy, loading: false });
+      set({ selectedVacancy: response.data, loading: false });
     } catch (error) {
       set({ 
         error: error instanceof Error ? error.message : 'Failed to fetch vacancy',
@@ -113,7 +114,17 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
     
     try {
       const repository = new VacanciesRepository();
-      await repository.apply(vacancyId, {});
+      const applicationData: VacancyApplicationData = {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        coverLetter: '',
+        expectedSalary: '',
+        availabilityDate: new Date().toISOString()
+      };
+      
+      await repository.apply(vacancyId, applicationData);
       set({ loading: false });
     } catch (error) {
       set({ 

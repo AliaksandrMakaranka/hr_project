@@ -29,11 +29,11 @@ export const useVacancyCounts = (): VacancyCounts => {
       setError(null);
 
       try {
-        const cities = await getCities();
+        const response = await getCities();
         logger.debug('Cities fetched successfully', {
-          count: cities.length
+          count: response.data.items.length
         });
-        setCitiesWithCounts(cities);
+        setCitiesWithCounts(response.data.items);
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Failed to fetch cities');
         logger.error('Error fetching cities', {

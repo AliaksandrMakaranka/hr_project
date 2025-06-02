@@ -1,11 +1,17 @@
+import type { ApiResponse } from '../types/api';
 import { logger } from '../utils/logger';
 
-interface ContactFormData {
+export interface ContactFormData {
   name: string;
   email: string;
   phone?: string;
   message: string;
   subject?: string;
+}
+
+export interface ContactResponse {
+  success: boolean;
+  messageId?: string;
 }
 
 /**
@@ -15,9 +21,9 @@ export class ContactRepository {
   /**
    * Submit a contact form
    * @param formData Contact form data
-   * @returns Promise with success status
+   * @returns Promise with contact form submission response
    */
-  async submitForm(formData: ContactFormData): Promise<boolean> {
+  async submitForm(formData: ContactFormData): Promise<ApiResponse<ContactResponse>> {
     logger.debug('Submitting contact form', { formData });
     try {
       // In a real app, this would be an API call
@@ -32,7 +38,14 @@ export class ContactRepository {
       return new Promise((resolve) => {
         setTimeout(() => {
           logger.info('Contact form submitted successfully', { formData });
-          resolve(true);
+          resolve({
+            data: {
+              success: true,
+              messageId: `msg_${Date.now()}`
+            },
+            status: 200,
+            message: 'Contact form submitted successfully'
+          });
         }, 500);
       });
     } catch (error) {

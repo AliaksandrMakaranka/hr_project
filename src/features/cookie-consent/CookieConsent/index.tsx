@@ -13,7 +13,15 @@ import {
   Link as StyledLink
 } from './styles';
 
-const CookieConsent: React.FC = () => {
+interface CookieConsentProps {
+  onAccept?: () => void;
+  onSettings?: () => void;
+}
+
+const CookieConsent: React.FC<CookieConsentProps> = ({ 
+  onAccept,
+  onSettings
+}) => {
   const { hasConsent, setConsent } = useCookieConsent();
 
   const handleAccept = () => {
@@ -22,11 +30,18 @@ const CookieConsent: React.FC = () => {
       functional: true,
       marketing: false
     });
+    if (onAccept) {
+      onAccept();
+    }
   };
 
   const handleSettings = () => {
-    // TODO: Реализовать открытие модального окна с настройками
-    console.log('Открыть настройки');
+    if (onSettings) {
+      onSettings();
+    } else {
+      // TODO: Реализовать открытие модального окна с настройками
+      console.log('Открыть настройки');
+    }
   };
 
   return (
