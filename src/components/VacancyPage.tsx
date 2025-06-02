@@ -11,13 +11,12 @@
  * @returns {JSX.Element} Страница с детальной информацией о вакансии
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ROUTES, NAVIGATION } from '../constants/routes';
+import { useVacancyStore } from '../store/vacancyStore';
 import { logger } from '../utils/logger';
-import { VacanciesRepository } from '../api';
-import type { Vacancy } from '../types/vacancy';
 
 // Стилизованные компоненты
 const Container = styled.div`
@@ -216,58 +215,78 @@ const NavLinkButton = styled.button`
   }
 `;
 
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.25rem;
+  color: #666;
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.25rem;
+  color: #d32f2f;
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.25rem;
+  color: #666;
+`;
+
 const VacancyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [vacancy, setVacancy] = useState<Vacancy | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const vacanciesRepository = new VacanciesRepository();
+  const { 
+    selectedVacancy,
+    loading,
+    error,
+    fetchVacancyById,
+    resetSelectedVacancy,
+    applyForVacancy
+  } = useVacancyStore();
 
   useEffect(() => {
-    const fetchVacancy = async () => {
+    const loadVacancy = async () => {
       if (!id) {
         logger.warn('No vacancy ID provided');
-        setError('No vacancy ID provided');
-        setLoading(false);
+        resetSelectedVacancy();
         return;
       }
 
       try {
         const vacancyId = parseInt(id, 10);
-        const vacancyData = await vacanciesRepository.getById(vacancyId);
-        setVacancy(vacancyData);
-        if (!vacancyData) {
-          setError('Vacancy not found');
-        }
+        await fetchVacancyById(vacancyId);
       } catch (err) {
-        logger.error('Error fetching vacancy', { error: err });
-        setError('Failed to load vacancy');
-      } finally {
-        setLoading(false);
+        logger.error('Error loading vacancy', { error: err });
+        resetSelectedVacancy();
       }
     };
 
-    fetchVacancy();
-  }, [id]);
+    loadVacancy();
+
+    // Cleanup function to clear selected vacancy when component unmounts
+    return () => {
+      resetSelectedVacancy();
+    };
+  }, [id, fetchVacancyById, resetSelectedVacancy]);
 
   const handleGoBack = () => {
-    logger.debug('Navigating back');
     navigate(-1);
   };
 
   const handleGoToCities = () => {
-    logger.debug('Navigating to cities page');
     navigate(ROUTES.CITIES);
   };
 
   const handleApply = async () => {
-    if (!vacancy) return;
+    if (!selectedVacancy) return;
     
     try {
-      await vacanciesRepository.apply(vacancy.id, {});
-      logger.info('Application submitted successfully', { vacancyId: vacancy.id });
+      await applyForVacancy(selectedVacancy.id);
+      logger.info('Application submitted successfully', { vacancyId: selectedVacancy.id });
       // TODO: Show success message to user
     } catch (err) {
       logger.error('Error submitting application', { error: err });
@@ -278,34 +297,40 @@ const VacancyPage: React.FC = () => {
   if (loading) {
     return (
       <Container>
-        <Header>
-          <Title>Loading...</Title>
-        </Header>
+        <LoadingMessage>Loading vacancy details...</LoadingMessage>
       </Container>
     );
   }
 
-  if (error || !vacancy) {
+  if (error) {
     return (
       <Container>
+        <ErrorMessage>Error: {error}</ErrorMessage>
         <NavButtonsContainer>
           <NavLinkButton onClick={handleGoBack}>
             {NAVIGATION.BACK}
           </NavLinkButton>
         </NavButtonsContainer>
-        <Header>
-          <Title>Вакансия не найдена</Title>
-          <Description>
-            {error || 'К сожалению, запрашиваемая вакансия не существует или была удалена.'}
-          </Description>
-        </Header>
       </Container>
     );
   }
 
-  const responsibilities = vacancy.responsibilities || [];
-  const requirements = vacancy.requirements || [];
-  const benefits = vacancy.benefits || [];
+  if (!selectedVacancy) {
+    return (
+      <Container>
+        <EmptyMessage>Vacancy not found</EmptyMessage>
+        <NavButtonsContainer>
+          <NavLinkButton onClick={handleGoBack}>
+            {NAVIGATION.BACK}
+          </NavLinkButton>
+        </NavButtonsContainer>
+      </Container>
+    );
+  }
+
+  const responsibilities = selectedVacancy.responsibilities || [];
+  const requirements = selectedVacancy.requirements || [];
+  const benefits = selectedVacancy.benefits || [];
 
   return (
     <Container>
@@ -319,12 +344,12 @@ const VacancyPage: React.FC = () => {
       </NavButtonsContainer>
 
       <Header>
-        <Title>{vacancy.title}</Title>
-        <CompanyInfo>{vacancy.company}</CompanyInfo>
-        <Salary>{vacancy.salary}</Salary>
-        {vacancy.tags && vacancy.tags.length > 0 && (
+        <Title>{selectedVacancy.title}</Title>
+        <CompanyInfo>{selectedVacancy.company}</CompanyInfo>
+        <Salary>{selectedVacancy.salary}</Salary>
+        {selectedVacancy.tags && selectedVacancy.tags.length > 0 && (
           <TagsContainer>
-            {vacancy.tags.map((tag, index) => (
+            {selectedVacancy.tags.map((tag, index) => (
               <Tag key={`tag-${index}`}>{tag}</Tag>
             ))}
           </TagsContainer>
@@ -335,7 +360,7 @@ const VacancyPage: React.FC = () => {
         <div>
           <ContentSection>
             <SectionTitle>Описание вакансии</SectionTitle>
-            <Description>{vacancy.description}</Description>
+            <Description>{selectedVacancy.description}</Description>
           </ContentSection>
 
           <ContentSection>
@@ -372,55 +397,55 @@ const VacancyPage: React.FC = () => {
             <ContactInfo>
               <ContactItem>
                 <ContactLabel>Компания</ContactLabel>
-                <ContactValue>{vacancy.company}</ContactValue>
+                <ContactValue>{selectedVacancy.company}</ContactValue>
               </ContactItem>
               <ContactItem>
                 <ContactLabel>Город</ContactLabel>
-                <ContactValue>{vacancy.city?.name || 'Не указан'}</ContactValue>
+                <ContactValue>{selectedVacancy.city?.name || 'Не указан'}</ContactValue>
               </ContactItem>
               <ContactItem>
                 <ContactLabel>Категория</ContactLabel>
-                <ContactValue>{vacancy.category?.name || 'Не указана'}</ContactValue>
+                <ContactValue>{selectedVacancy.category?.name || 'Не указана'}</ContactValue>
               </ContactItem>
               <ContactItem>
                 <ContactLabel>Тип занятости</ContactLabel>
-                <ContactValue>{vacancy.employmentType || 'Не указан'}</ContactValue>
+                <ContactValue>{selectedVacancy.employmentType || 'Не указан'}</ContactValue>
               </ContactItem>
               <ContactItem>
                 <ContactLabel>Требуемый опыт</ContactLabel>
-                <ContactValue>{vacancy.experience || 'Не указан'}</ContactValue>
+                <ContactValue>{selectedVacancy.experience || 'Не указан'}</ContactValue>
               </ContactItem>
-              {vacancy.location?.address && (
+              {selectedVacancy.location?.address && (
                 <ContactItem>
                   <ContactLabel>Адрес</ContactLabel>
-                  <ContactValue>{vacancy.location.address}</ContactValue>
+                  <ContactValue>{selectedVacancy.location.address}</ContactValue>
                 </ContactItem>
               )}
-              {vacancy.contact && (
+              {selectedVacancy.contact && (
                 <>
-                  {vacancy.contact.email && (
+                  {selectedVacancy.contact.email && (
                     <ContactItem>
                       <ContactLabel>Email</ContactLabel>
-                      <ContactValue>{vacancy.contact.email}</ContactValue>
+                      <ContactValue>{selectedVacancy.contact.email}</ContactValue>
                     </ContactItem>
                   )}
-                  {vacancy.contact.phone && (
+                  {selectedVacancy.contact.phone && (
                     <ContactItem>
                       <ContactLabel>Телефон</ContactLabel>
-                      <ContactValue>{vacancy.contact.phone}</ContactValue>
+                      <ContactValue>{selectedVacancy.contact.phone}</ContactValue>
                     </ContactItem>
                   )}
                 </>
               )}
-              {vacancy.workingHours && (
+              {selectedVacancy.workingHours && (
                 <WorkingHoursContainer>
                   <WorkingHoursTitle>График работы</WorkingHoursTitle>
                   <WorkingHoursList>
                     <WorkingHoursItem>
-                      Время: {vacancy.workingHours?.from} - {vacancy.workingHours?.to}
+                      Время: {selectedVacancy.workingHours?.from} - {selectedVacancy.workingHours?.to}
                     </WorkingHoursItem>
                     <WorkingHoursItem>
-                      Дни: {vacancy.workingHours?.days?.join(', ')}
+                      Дни: {selectedVacancy.workingHours?.days?.join(', ')}
                     </WorkingHoursItem>
                   </WorkingHoursList>
                 </WorkingHoursContainer>
