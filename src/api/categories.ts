@@ -1,6 +1,6 @@
-import type { JobCategory } from '../types/jobCategory';
+import type { JobCategory } from '../types';
 import { jobCategories as mockCategories } from '../data/categories';
-import { logger } from '../utils/logger';
+import { logger } from '@utils/logger';
 
 /**
  * Repository class for handling job category-related API calls

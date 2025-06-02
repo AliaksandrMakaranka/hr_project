@@ -1,8 +1,8 @@
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../constants/routes';
-import { useCookieConsent } from '../../hooks/useCookieConsent';
+import { ROUTES } from '@constants/routes';
+import { useCookieConsent } from '@hooks/useCookieConsent';
 import {
   Banner,
   Content,

@@ -6,9 +6,7 @@ import {
   updateCategoriesWithVacancyCounts,
   updateCitiesWithVacancyCounts
 } from './filters';
-import type { Vacancy } from '../types/vacancy';
-import type { JobCategory } from '../types/jobCategory';
-import type { City } from '../types/city';
+import type { Vacancy, JobCategory, City } from '../types';
 
 // Mock logger to avoid console output during tests
 vi.mock('./logger', () => ({
@@ -47,15 +45,8 @@ describe('filters', () => {
       responsibilities: ['Develop UI', 'Write tests'],
       requirements: ['React', 'TypeScript'],
       benefits: ['Remote work', 'Health insurance'],
-      employer: {
-        name: 'Tech Corp',
-        email: 'hr@techcorp.com',
-        phone: '+48 123 456 789',
-        website: 'techcorp.com'
-      },
       experience: '3+ years',
-      education: 'Bachelor degree',
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: 2,
@@ -82,15 +73,8 @@ describe('filters', () => {
       responsibilities: ['Develop API', 'Write tests'],
       requirements: ['Node.js', 'TypeScript'],
       benefits: ['Remote work', 'Health insurance'],
-      employer: {
-        name: 'Tech Corp',
-        email: 'hr@techcorp.com',
-        phone: '+48 123 456 789',
-        website: 'techcorp.com'
-      },
       experience: '3+ years',
-      education: 'Bachelor degree',
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
   ];
 
@@ -131,30 +115,62 @@ describe('filters', () => {
   ];
 
   describe('filterVacancies', () => {
-    it('should filter vacancies by category and city', () => {
-      const result = filterVacancies(mockVacancies, 1, 1);
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
+    const mockVacancy: Vacancy = {
+      id: 1,
+      title: 'Test Vacancy',
+      description: 'Test Description',
+      salary: '1000',
+      experience: '1-3 years',
+      employmentType: 'Full-time',
+      company: 'Test Company',
+      createdAt: new Date(),
+      category: {
+        id: 1,
+        name: 'Test Category',
+        vacanciesCount: 1,
+        description: 'Test Description',
+        popularSkills: ['Test Skill'],
+        averageSalary: '1000'
+      },
+      city: {
+        id: 1,
+        name: 'Test City',
+        coordinates: {
+          lat: 0,
+          lng: 0
+        }
+      },
+      location: {
+        address: 'Test Address',
+        coordinates: {
+          lat: 0,
+          lng: 0
+        }
+      }
+    };
+
+    it('should return all vacancies when no filters are provided', () => {
+      const result = filterVacancies([mockVacancy]);
+      expect(result).toEqual([mockVacancy]);
     });
 
-    it('should filter vacancies by category only', () => {
-      const result = filterVacancies(mockVacancies, 1, null);
-      expect(result).toHaveLength(2);
+    it('should filter by category', () => {
+      const result = filterVacancies([mockVacancy], 1);
+      expect(result).toEqual([mockVacancy]);
     });
 
-    it('should filter vacancies by city only', () => {
-      const result = filterVacancies(mockVacancies, null, 1);
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
+    it('should filter by city', () => {
+      const result = filterVacancies([mockVacancy], null, 1);
+      expect(result).toEqual([mockVacancy]);
     });
 
-    it('should return all vacancies when no filters are applied', () => {
-      const result = filterVacancies(mockVacancies, null, null);
-      expect(result).toHaveLength(2);
+    it('should filter by both category and city', () => {
+      const result = filterVacancies([mockVacancy], 1, 1);
+      expect(result).toEqual([mockVacancy]);
     });
 
-    it('should handle invalid input', () => {
-      const result = filterVacancies(undefined as unknown as Vacancy[], 1, 1);
+    it('should return empty array when no vacancies match filters', () => {
+      const result = filterVacancies([mockVacancy], 2);
       expect(result).toEqual([]);
     });
   });

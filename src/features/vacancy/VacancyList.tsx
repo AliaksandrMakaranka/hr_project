@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../constants/routes';
-import { useVacancyStore } from '../store/vacancyStore';
-import type { Vacancy } from '../types';
+import { ROUTES } from '@constants/routes';
+import { useVacancyStore } from '@store/vacancyStore';
+import type { Vacancy } from '../../types';
 
 const Container = styled.div`
   width: 100%;

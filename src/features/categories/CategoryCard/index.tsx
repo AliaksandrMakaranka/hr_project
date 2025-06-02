@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../constants/routes';
-import type { JobCategory } from '../../types/jobCategory';
+import { ROUTES } from '@constants/routes';
+import type { JobCategory } from '../../../types';
 import {
   Card,
   Icon,

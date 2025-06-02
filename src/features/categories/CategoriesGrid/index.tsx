@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import CategoryCard from '../CategoryCard';
 import { Container, Grid, Title } from './styles';
-import { CategoriesRepository } from '../../api';
-import type { JobCategory } from '../../types/jobCategory';
-import { logger } from '../../utils/logger';
+import { CategoriesRepository } from '../../../api';
+import type { JobCategory } from '../../../types';
+import { logger } from '../../../utils/logger';
 
 const CategoriesGrid: React.FC = () => {
   const [categories, setCategories] = useState<JobCategory[]>([]);

@@ -1,8 +1,8 @@
-import type { City } from '../types/city';
+import type { City } from '../types';
 import { cities as mockCities } from '../data/cities';
 import { vacancies } from '../data/vacancies';
-import { updateCitiesWithVacancyCounts } from '../utils/filters';
-import { logger } from '../utils/logger';
+import { updateCitiesWithVacancyCounts } from '@utils/filters';
+import { logger } from '@utils/logger';
 
 /**
  * Получает список городов с количеством вакансий

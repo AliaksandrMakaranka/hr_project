@@ -1,6 +1,6 @@
-import type { Vacancy } from '../types/vacancy';
+import type { Vacancy } from '../types';
 import { vacancies as mockVacancies } from '../data/vacancies';
-import { logger } from '../utils/logger';
+import { logger } from '@utils/logger';
 
 /**
  * Repository class for handling vacancy-related API calls

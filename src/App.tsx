@@ -3,20 +3,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { theme } from './theme';
 import { GlobalStyle } from './styles/global';
-import Navbar from './components/layout/Navbar';
+import Navbar from '@layouts/Navbar';
 import HomePage from './pages/Home';
 import CitiesPage from './pages/Cities';
 import CityPage from './pages/City';
 import JobsPage from './pages/Jobs';
-import VacancyPage from './components/VacancyPage';
+import VacancyPage from '@features/vacancy/VacancyPage';
 import VacanciesPage from './pages/Vacancies';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import CookiePolicy from './pages/CookiePolicy';
 import AboutPage from './pages/About';
 import { ROUTES } from './constants/routes';
-import Footer from './components/Footer';
-import CookieConsent from './components/CookieConsent';
+import Footer from '@layouts/Footer';
+import CookieConsent from '@features/cookie-consent/CookieConsent';
 
 const App: React.FC = () => {
   return (

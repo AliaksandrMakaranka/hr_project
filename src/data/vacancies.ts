@@ -1,4 +1,4 @@
-import type { Vacancy } from '../types/vacancy';
+import type { Vacancy } from '../types';
 import { cities } from '../data/cities';
 import { jobCategories } from '../data/categories/index';
 

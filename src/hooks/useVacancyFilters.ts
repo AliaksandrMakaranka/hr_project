@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { vacancies } from '../data/vacancies';
-import { filterVacancies } from '../utils/filters';
-import { logger } from '../utils/logger';
+import { filterVacancies } from '@utils/filters';
+import { logger } from '@utils/logger';
 
 interface VacancyFilters {
   filteredVacancies: typeof vacancies;

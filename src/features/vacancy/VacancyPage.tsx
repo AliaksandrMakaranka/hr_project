@@ -14,9 +14,9 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ROUTES, NAVIGATION } from '../constants/routes';
-import { useVacancyStore } from '../store/vacancyStore';
-import { logger } from '../utils/logger';
+import { ROUTES, NAVIGATION } from '@constants/routes';
+import { useVacancyStore } from '@store/vacancyStore';
+import { logger } from '@utils/logger';
 
 // Стилизованные компоненты
 const Container = styled.div`

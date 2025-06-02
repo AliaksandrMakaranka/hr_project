@@ -1,6 +1,4 @@
-import type { Vacancy } from '../types/vacancy';
-import type { City } from '../types/city';
-import type { JobCategory } from '../types/jobCategory';
+import type { Vacancy, City, JobCategory } from '../types';
 import { logger } from './logger';
 
 /**
