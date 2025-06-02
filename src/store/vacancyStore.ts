@@ -67,6 +67,14 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
       const repository = new VacanciesRepository();
       const response = await repository.getAll();
       
+      if ('error' in response && response.error) {
+        set({ 
+          error: response.error.message,
+          loading: false 
+        });
+        return;
+      }
+      
       // Apply filters based on current city and category
       const filteredVacancies = response.data.items.filter(vacancy => {
         const cityMatch = !currentCity || vacancy.city?.id === currentCity.id;

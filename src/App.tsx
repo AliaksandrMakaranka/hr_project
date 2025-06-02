@@ -17,6 +17,7 @@ import AboutPage from './pages/About';
 import { ROUTES } from './constants/routes';
 import Footer from '@layouts/Footer';
 import CookieConsent from '@features/cookie-consent/CookieConsent';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const App: React.FC = () => {
   return (
@@ -26,18 +27,20 @@ const App: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Navbar />
           <main style={{ flex: 1, width: '100%' }}>
-            <Routes>
-              <Route path={ROUTES.HOME} element={<HomePage />} />
-              <Route path={ROUTES.VACANCIES} element={<VacanciesPage />} />
-              <Route path={ROUTES.CITIES} element={<CitiesPage />} />
-              <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
-              <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
-              <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
-              <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
-              <Route path={ROUTES.TERMS_OF_USE} element={<TermsOfUse />} />
-              <Route path={ROUTES.COOKIE_POLICY} element={<CookiePolicy />} />
-              <Route path={ROUTES.ABOUT} element={<AboutPage />} />
-            </Routes>
+            <ErrorBoundary>
+              <Routes>
+                <Route path={ROUTES.HOME} element={<HomePage />} />
+                <Route path={ROUTES.VACANCIES} element={<VacanciesPage />} />
+                <Route path={ROUTES.CITIES} element={<CitiesPage />} />
+                <Route path={ROUTES.CITY(':id')} element={<CityPage />} />
+                <Route path={ROUTES.CATEGORY(':id')} element={<JobsPage />} />
+                <Route path={ROUTES.VACANCY(':id')} element={<VacancyPage />} />
+                <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+                <Route path={ROUTES.TERMS_OF_USE} element={<TermsOfUse />} />
+                <Route path={ROUTES.COOKIE_POLICY} element={<CookiePolicy />} />
+                <Route path={ROUTES.ABOUT} element={<AboutPage />} />
+              </Routes>
+            </ErrorBoundary>
           </main>
           <Footer />
           <CookieConsent />
