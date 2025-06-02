@@ -13,6 +13,7 @@ import VacanciesPage from './pages/Vacancies';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import CookiePolicy from './pages/CookiePolicy';
+import AboutPage from './pages/About';
 import { ROUTES } from './constants/routes';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
@@ -35,6 +36,7 @@ const App: React.FC = () => {
               <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
               <Route path={ROUTES.TERMS_OF_USE} element={<TermsOfUse />} />
               <Route path={ROUTES.COOKIE_POLICY} element={<CookiePolicy />} />
+              <Route path={ROUTES.ABOUT} element={<AboutPage />} />
             </Routes>
           </main>
           <Footer />
