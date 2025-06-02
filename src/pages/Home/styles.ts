@@ -215,44 +215,6 @@ export const SearchButton = styled.button`
   }
 `;
 
-export const CategoriesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: ${({ theme }) => theme.spacing.gridGap};
-  margin-bottom: ${({ theme }) => theme.spacing.sectionMargin};
-`;
-
-export const CategoryCard = styled(motion.div)`
-  background: ${({ theme }) => theme.colors.background.light};
-  border-radius: ${({ theme }) => theme.borderRadius.card};
-  padding: ${({ theme }) => theme.spacing.cardPadding};
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  transition: ${({ theme }) => theme.transitions.default};
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: ${({ theme }) => theme.shadows.cardHover};
-  }
-`;
-
-export const CategoryTitle = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  color: ${({ theme }) => theme.colors.textPrimary};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-export const CategoryDescription = styled.p`
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-export const CategoryStats = styled.div`
-  display: flex;
-  justify-content: space-between;
-  color: ${({ theme }) => theme.colors.textMuted};
-  font-size: ${({ theme }) => theme.typography.small};
-`;
-
 export const CitiesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
