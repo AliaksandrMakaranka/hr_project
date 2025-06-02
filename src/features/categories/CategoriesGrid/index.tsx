@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import CategoryCard from '../CategoryCard';
 import { Container, Grid, Title } from './styles';
 import { CategoriesRepository } from '../../../api';
@@ -10,7 +10,7 @@ const CategoriesGrid: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const categoriesRepository = new CategoriesRepository();
+  const categoriesRepository = useMemo(() => new CategoriesRepository(), []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -26,7 +26,7 @@ const CategoriesGrid: React.FC = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [categoriesRepository]);
 
   if (loading) {
     return (

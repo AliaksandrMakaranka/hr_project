@@ -44,7 +44,7 @@ const VacanciesPage: React.FC = () => {
     }
 
     return updatedVacancies;
-  }, [initialVacancies, jobCategories]);
+  }, []); // Убраны ненужные зависимости, так как initialVacancies и jobCategories не меняются
 
   // Получаем уникальные категории из импортированного массива
   const categories = useMemo(() => jobCategories, []);
@@ -58,9 +58,6 @@ const VacanciesPage: React.FC = () => {
   );
 
   const filteredVacancies = vacancies.filter(vacancy => {
-    // Логгируем ID категории для каждой вакансии
-    console.log(`Vacancy ID: ${vacancy.id}, Title: ${vacancy.title}, Category ID: ${vacancy.category?.id}, Category Name: ${vacancy.category?.name}`);
-
     const matchesSearch = vacancy.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vacancy.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vacancy.description.toLowerCase().includes(searchQuery.toLowerCase());
