@@ -15,14 +15,12 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useVacancyCounts } from '../../hooks/useVacancyCounts';
 import { ROUTES, NAVIGATION } from '../../constants/routes';
+import CityCard from '../../components/CityCard';
 import {
   Container,
   PageTitle,
   ContentWrapper,
   CitiesList,
-  CityCard,
-  CityName,
-  VacancyCount,
   MapContainer,
   NavButtonsContainer,
   NavLinkButton
@@ -41,6 +39,16 @@ L.Icon.Default.mergeOptions({
   iconUrl,
   shadowUrl,
 });
+
+// Map of city names to their image URLs
+const cityImages: Record<string, string> = {
+  'Варшава': '/images/cities/warsaw.jpg',
+  'Краков': '/images/cities/krakow.jpg',
+  'Вроцлав': '/images/cities/wroclaw.jpg',
+  'Познань': '/images/cities/poznan.jpg',
+  'Гданьск': '/images/cities/gdansk.jpg',
+  'Лодзь': '/images/cities/lodz.jpg',
+};
 
 const CitySelectionPage: React.FC = () => {
   const { citiesWithCounts, isLoading, error } = useVacancyCounts();
@@ -92,10 +100,13 @@ const CitySelectionPage: React.FC = () => {
         <CitiesList>
           {citiesWithCounts.map(city => (
             city.coordinates && (
-              <CityCard key={city.id} to={ROUTES.CITY(city.id)}>
-                <CityName>{city.name}</CityName>
-                <VacancyCount>{city.vacanciesCount} вакансий</VacancyCount>
-              </CityCard>
+              <CityCard
+                key={city.id}
+                name={city.name}
+                vacanciesCount={city.vacanciesCount || 0}
+                imageUrl={cityImages[city.name] || '/images/cities/default.jpg'}
+                to={ROUTES.CITY(city.id)}
+              />
             )
           ))}
         </CitiesList>

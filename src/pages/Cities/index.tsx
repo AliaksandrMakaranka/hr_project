@@ -1,14 +1,22 @@
 import React from 'react';
 import { useVacancyCounts } from '../../hooks/useVacancyCounts';
 import { ROUTES } from '../../constants/routes';
+import CityCard from '../../components/CityCard';
 import {
   Container,
   PageTitle,
   CitiesList,
-  CityCard,
-  CityName,
-  VacancyCount
 } from './styles';
+
+// Map of city names to their image URLs (same as in CitySelection)
+const cityImages: Record<string, string> = {
+  'Варшава': '/images/cities/warsaw.jpg',
+  'Краков': '/images/cities/krakow.jpg',
+  'Вроцлав': '/images/cities/wroclaw.jpg',
+  'Познань': '/images/cities/poznan.jpg',
+  'Гданьск': '/images/cities/gdansk.jpg',
+  'Лодзь': '/images/cities/lodz.jpg',
+};
 
 /**
  * Страница со списком городов
@@ -52,10 +60,13 @@ const CitiesPage: React.FC = () => {
       
       <CitiesList>
         {citiesWithVacancies.map(city => (
-          <CityCard key={city.id} to={ROUTES.CITY(city.id)}>
-            <CityName>{city.name}</CityName>
-            <VacancyCount>{city.vacanciesCount} вакансий</VacancyCount>
-          </CityCard>
+          <CityCard
+            key={city.id}
+            name={city.name}
+            vacanciesCount={city.vacanciesCount || 0}
+            imageUrl={cityImages[city.name] || '/images/cities/default.jpg'}
+            to={ROUTES.CITY(city.id)}
+          />
         ))}
       </CitiesList>
     </Container>
