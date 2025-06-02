@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { vacancies } from '../data/vacancies';
 import { filterVacancies } from '../utils/filters';
@@ -19,73 +19,29 @@ export const useVacancyFilters = (): VacancyFilters => {
 
   // Поддержка как categoryId, так и id для универсальности
   const categoryIdNum = useMemo(() => {
-    try {
-      if (categoryId) {
-        const parsed = parseInt(categoryId, 10);
-        if (isNaN(parsed)) {
-          logger.warn('Invalid categoryId in URL', { categoryId });
-          return null;
-        }
-        return parsed;
-      }
-      if (id) {
-        const parsed = parseInt(id, 10);
-        if (isNaN(parsed)) {
-          logger.warn('Invalid id in URL', { id });
-          return null;
-        }
-        return parsed;
-      }
-      return null;
-    } catch (error) {
-      logger.error('Error parsing categoryId', { error, categoryId, id });
+    const paramToParse = categoryId || id;
+    if (!paramToParse) return null;
+
+    const parsed = parseInt(paramToParse, 10);
+    if (isNaN(parsed)) {
+      logger.warn('Invalid category ID in URL', { paramToParse });
       return null;
     }
+    return parsed;
   }, [categoryId, id]);
 
   const cityIdNum = useMemo(() => {
-    try {
-      if (!cityId) return null;
-      const parsed = parseInt(cityId, 10);
-      if (isNaN(parsed)) {
-        logger.warn('Invalid cityId in URL', { cityId });
-        return null;
-      }
-      return parsed;
-    } catch (error) {
-      logger.error('Error parsing cityId', { error, cityId });
+    if (!cityId) return null;
+    const parsed = parseInt(cityId, 10);
+    if (isNaN(parsed)) {
+      logger.warn('Invalid city ID in URL', { cityId });
       return null;
     }
+    return parsed;
   }, [cityId]);
 
-  useEffect(() => {
-    logger.debug('URL parameters changed', {
-      categoryId,
-      cityId,
-      id,
-      parsedCategoryId: categoryIdNum,
-      parsedCityId: cityIdNum
-    });
-  }, [categoryId, cityId, id, categoryIdNum, cityIdNum]);
-
   const filteredVacancies = useMemo(() => {
-    try {
-      const filtered = filterVacancies(vacancies, categoryIdNum, cityIdNum);
-      logger.debug('Vacancies filtered', {
-        totalVacancies: vacancies.length,
-        filteredCount: filtered.length,
-        categoryId: categoryIdNum,
-        cityId: cityIdNum
-      });
-      return filtered;
-    } catch (error) {
-      logger.error('Error filtering vacancies', {
-        error,
-        categoryId: categoryIdNum,
-        cityId: cityIdNum
-      });
-      return [];
-    }
+    return filterVacancies(vacancies, categoryIdNum, cityIdNum);
   }, [categoryIdNum, cityIdNum]);
 
   return {

@@ -15,6 +15,7 @@
  * @component
  * @returns {JSX.Element} Главная страница приложения
  */
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ROUTES } from '../../constants/routes';

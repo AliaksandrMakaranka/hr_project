@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { jobCategories } from '../../data/categories';
+import { jobCategories as categories } from '../../data/categories/index';
 import { cities } from '../../data/cities';
 import type { City } from '../../types/city';
 import type { JobCategory } from '../../types/jobCategory';
@@ -46,11 +46,10 @@ const JobsPage: React.FC = () => {
   const getHeaderInfo = (): string => {
     try {
       if (categoryId && cityId) {
-        const category = jobCategories.find((c: JobCategory) => c.id === categoryId);
+        const category = categories.find((c: JobCategory) => c.id === categoryId);
         const city = cities.find((c: City) => c.id === cityId);
         
         if (!category || !city) {
-          logger.warn('Category or city not found', { categoryId, cityId });
           return 'Вакансии не найдены';
         }
         
@@ -58,9 +57,8 @@ const JobsPage: React.FC = () => {
       }
       
       if (categoryId) {
-        const category = jobCategories.find((c: JobCategory) => c.id === categoryId);
+        const category = categories.find((c: JobCategory) => c.id === categoryId);
         if (!category) {
-          logger.warn('Category not found', { categoryId });
           return 'Вакансии не найдены';
         }
         return `Вакансии в категории "${category.name}"`;
@@ -69,7 +67,6 @@ const JobsPage: React.FC = () => {
       if (cityId) {
         const city = cities.find((c: City) => c.id === cityId);
         if (!city) {
-          logger.warn('City not found', { cityId });
           return 'Вакансии не найдены';
         }
         return `Вакансии в городе ${city.name}`;
@@ -82,6 +79,19 @@ const JobsPage: React.FC = () => {
     }
   };
 
+  const getNoVacanciesMessage = (): string => {
+    if (categoryId && cityId) {
+      return 'В выбранной категории и городе пока нет вакансий';
+    }
+    if (categoryId) {
+      return 'В выбранной категории пока нет вакансий';
+    }
+    if (cityId) {
+      return 'В выбранном городе пока нет вакансий';
+    }
+    return 'Нет доступных вакансий';
+  };
+
   const handleGoBack = () => {
     logger.debug('Navigating back');
     navigate(-1);
@@ -92,7 +102,7 @@ const JobsPage: React.FC = () => {
     navigate(ROUTES.CITIES);
   };
 
-  const handleVacancyClick = (vacancyId: string) => {
+  const handleVacancyClick = (vacancyId: number) => {
     logger.debug('Vacancy clicked', { vacancyId });
   };
 
@@ -167,7 +177,7 @@ const JobsPage: React.FC = () => {
           ))
         ) : (
           <NoVacanciesMessage>
-            Нет доступных вакансий
+            {getNoVacanciesMessage()}
           </NoVacanciesMessage>
         )}
       </VacanciesList>

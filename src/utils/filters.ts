@@ -19,63 +19,40 @@ export const filterVacancies = (
     logger.error('Invalid vacancies array provided', { vacancies });
     return [];
   }
-  logger.debug('Filtering vacancies', { 
+
+  logger.debug('Starting vacancy filtering', { 
     totalVacancies: vacancies.length,
     categoryId, 
     cityId 
   });
 
-  return vacancies.filter(vacancy => {
-    try {
-      if (!vacancy?.category || !vacancy?.city) {
-        logger.warn('Invalid vacancy data', { vacancyId: vacancy?.id });
-        return false;
-      }
-
-      if (categoryId && cityId) {
-        const matches = vacancy.category.id === categoryId && vacancy.city.id === cityId;
-        logger.debug('Filtering by category and city', {
-          vacancyId: vacancy.id,
-          matches,
-          vacancyCategoryId: vacancy.category.id,
-          vacancyCityId: vacancy.city.id,
-          filterCategoryId: categoryId,
-          filterCityId: cityId
-        });
-        return matches;
-      }
-
-      if (categoryId) {
-        const matches = vacancy.category.id === categoryId;
-        logger.debug('Filtering by category', {
-          vacancyId: vacancy.id,
-          matches,
-          vacancyCategoryId: vacancy.category.id,
-          filterCategoryId: categoryId
-        });
-        return matches;
-      }
-
-      if (cityId) {
-        const matches = vacancy.city.id === cityId;
-        logger.debug('Filtering by city', {
-          vacancyId: vacancy.id,
-          matches,
-          vacancyCityId: vacancy.city.id,
-          filterCityId: cityId
-        });
-        return matches;
-      }
-
-      return true;
-    } catch (error) {
-      logger.error('Error filtering vacancy', { 
-        error, 
-        vacancyId: vacancy?.id 
-      });
+  const filtered = vacancies.filter(vacancy => {
+    if (!vacancy?.category || !vacancy?.city) {
       return false;
     }
+
+    if (categoryId && cityId) {
+      return vacancy.category.id === categoryId && vacancy.city.id === cityId;
+    }
+
+    if (categoryId) {
+      return vacancy.category.id === categoryId;
+    }
+
+    if (cityId) {
+      return vacancy.city.id === cityId;
+    }
+
+    return true;
   });
+
+  logger.debug('Vacancy filtering completed', {
+    filteredCount: filtered.length,
+    categoryId,
+    cityId
+  });
+
+  return filtered;
 };
 
 /**

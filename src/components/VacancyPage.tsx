@@ -220,7 +220,8 @@ const VacancyPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Find the vacancy by ID with proper type checking
-  const vacancy = vacancies.find(v => v.id === id);
+  const vacancyId = id ? parseInt(id, 10) : undefined;
+  const vacancy = vacancyId !== undefined ? vacancies.find(v => v.id === vacancyId) : undefined;
 
   useEffect(() => {
     logger.debug('VacancyPage mounted', { id, vacancyFound: !!vacancy });

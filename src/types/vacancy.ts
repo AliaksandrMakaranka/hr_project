@@ -2,7 +2,7 @@ import type { City } from './city';
 import type { JobCategory } from './jobCategory';
 
 export interface Vacancy {
-  id: string;
+  id: number;
   title: string;
   company: string;
   salary: string;

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ROUTES } from '../../constants/routes';
-import { vacancies } from '../../data/vacancies';
-import type { JobCategory } from '../../types/jobCategory';
+import { vacancies as initialVacancies } from '../../data/vacancies';
 import type { City } from '../../types/city';
+import { jobCategories } from '../../data/categories/index';
 import {
   Container,
   Title,
@@ -30,14 +30,24 @@ const VacanciesPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
 
-  // Получаем уникальные категории и города
-  const categories = Array.from(
-    new Map(
-      vacancies
-        .filter((v): v is typeof v & { category: JobCategory } => v.category !== undefined)
-        .map(v => [v.category.id, v.category])
-    ).values()
-  );
+  // Создаем изменяемую копию вакансий и обновляем категории для проблемных вакансий
+  const vacancies = useMemo(() => {
+    const updatedVacancies = [...initialVacancies];
+    const monolithicCategory = jobCategories.find(c => c.id === 9);
+
+    if (monolithicCategory) {
+      const betonshik = updatedVacancies.find(v => v.id === 10);
+      if (betonshik) betonshik.category = monolithicCategory;
+
+      const armaturschik = updatedVacancies.find(v => v.id === 11);
+      if (armaturschik) armaturschik.category = monolithicCategory;
+    }
+
+    return updatedVacancies;
+  }, [initialVacancies, jobCategories]);
+
+  // Получаем уникальные категории из импортированного массива
+  const categories = useMemo(() => jobCategories, []);
   
   const cities = Array.from(
     new Map(
@@ -48,6 +58,9 @@ const VacanciesPage: React.FC = () => {
   );
 
   const filteredVacancies = vacancies.filter(vacancy => {
+    // Логгируем ID категории для каждой вакансии
+    console.log(`Vacancy ID: ${vacancy.id}, Title: ${vacancy.title}, Category ID: ${vacancy.category?.id}, Category Name: ${vacancy.category?.name}`);
+
     const matchesSearch = vacancy.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vacancy.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vacancy.description.toLowerCase().includes(searchQuery.toLowerCase());

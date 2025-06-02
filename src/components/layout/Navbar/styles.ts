@@ -43,6 +43,7 @@ export const NavLink = styled(Link)<{ $active?: boolean }>`
   position: relative;
   cursor: pointer;
   padding: ${({ theme }) => theme.spacing.sm} 0;
+  transition: color ${({ theme }) => theme.transitions.fast};
 
   &:after {
     content: '';
@@ -54,6 +55,10 @@ export const NavLink = styled(Link)<{ $active?: boolean }>`
     background-color: ${({ theme }) => theme.colors.construction.safety};
     transform: scaleX(${({ $active }) => $active ? 1 : 0});
     transition: transform ${({ theme }) => theme.transitions.fast};
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.construction.safety};
   }
 
   &:hover:after {
@@ -103,49 +108,10 @@ export const MobileNavLink = styled(Link)`
   color: ${({ theme }) => theme.colors.textPrimary};
   text-decoration: none;
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  transition: background-color ${({ theme }) => theme.transitions.fast};
+  transition: all ${({ theme }) => theme.transitions.fast};
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.background.light};
+    color: ${({ theme }) => theme.colors.construction.safety};
   }
-`;
-
-export const AboutDropdown = styled.div`
-  position: relative;
-`;
-
-export const DropdownContent = styled.div<{ $isOpen: boolean }>`
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: ${({ theme }) => theme.colors.background.main};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
-  padding: ${({ theme }) => theme.spacing.sm};
-  min-width: 200px;
-  display: ${({ $isOpen }) => $isOpen ? 'block' : 'none'};
-  z-index: 1000;
-`;
-
-export const DropdownLink = styled(Link)`
-  display: block;
-  color: ${({ theme }) => theme.colors.textPrimary};
-  text-decoration: none;
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  transition: background-color ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.background.light};
-  }
-`;
-
-export const NavDropdown = styled.div`
-  color: ${({ theme }) => theme.colors.textPrimary};
-  font-weight: 500;
-  position: relative;
-  cursor: pointer;
-  padding: ${({ theme }) => theme.spacing.sm} 0;
-  display: flex;
-  align-items: center;
 `; 

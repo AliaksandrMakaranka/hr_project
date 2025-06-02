@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { useCookieConsent } from '../../hooks/useCookieConsent';

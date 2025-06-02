@@ -7,26 +7,17 @@ import {
   Logo,
   NavLinks,
   NavLink,
-  NavDropdown,
   MobileMenuButton,
   MobileMenu,
-  MobileNavLink,
-  AboutDropdown,
-  DropdownContent,
-  DropdownLink
+  MobileNavLink
 } from './styles';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const location = useLocation();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const toggleAboutDropdown = () => {
-    setIsAboutDropdownOpen(!isAboutDropdownOpen);
   };
 
   return (
@@ -43,21 +34,12 @@ const Navbar: React.FC = () => {
           <NavLink as={Link} to={ROUTES.VACANCIES} $active={location.pathname === ROUTES.VACANCIES}>
             Вакансии
           </NavLink>
-          <NavLink as={Link} to={ROUTES.CATEGORIES} $active={location.pathname === ROUTES.CATEGORIES}>
-            Категории
+          <NavLink as={Link} to={ROUTES.ABOUT} $active={location.pathname === ROUTES.ABOUT}>
+            О компании
           </NavLink>
-          <NavDropdown
-            onClick={toggleAboutDropdown}
-            style={{ color: location.pathname === ROUTES.ABOUT || location.pathname === ROUTES.CONTACT ? '#FF4B2B' : undefined }}
-          >
-            О нас
-            <AboutDropdown>
-              <DropdownContent $isOpen={isAboutDropdownOpen}>
-                <DropdownLink as={Link} to={ROUTES.ABOUT}>О компании</DropdownLink>
-                <DropdownLink as={Link} to={ROUTES.CONTACT}>Контакты</DropdownLink>
-              </DropdownContent>
-            </AboutDropdown>
-          </NavDropdown>
+          <NavLink as={Link} to={ROUTES.CONTACT} $active={location.pathname === ROUTES.CONTACT}>
+            Контакты
+          </NavLink>
         </NavLinks>
 
         <MobileMenuButton onClick={toggleMobileMenu}>
@@ -76,9 +58,6 @@ const Navbar: React.FC = () => {
           </MobileNavLink>
           <MobileNavLink as={Link} to={ROUTES.VACANCIES} onClick={toggleMobileMenu}>
             Вакансии
-          </MobileNavLink>
-          <MobileNavLink as={Link} to={ROUTES.CATEGORIES} onClick={toggleMobileMenu}>
-            Категории
           </MobileNavLink>
           <MobileNavLink as={Link} to={ROUTES.ABOUT} onClick={toggleMobileMenu}>
             О компании

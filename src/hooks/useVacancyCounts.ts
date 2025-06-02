@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { vacancies } from '../data/vacancies';
-import { jobCategories } from '../data/categories';
+import { jobCategories as categories } from '../data/categories/index';
 import { updateCategoriesWithVacancyCounts } from '../utils/filters';
 import { getCities } from '../api/cities';
 import type { City } from '../types/city';
@@ -53,11 +53,11 @@ export const useVacancyCounts = (): VacancyCounts => {
   const categoriesWithCounts = useMemo(() => {
     try {
       logger.debug('Updating categories with vacancy counts', {
-        totalCategories: jobCategories.length,
+        totalCategories: categories.length,
         totalVacancies: vacancies.length
       });
 
-      const updatedCategories = updateCategoriesWithVacancyCounts(jobCategories, vacancies);
+      const updatedCategories = updateCategoriesWithVacancyCounts(categories, vacancies);
       
       logger.debug('Categories updated with vacancy counts', {
         updatedCount: updatedCategories.length
@@ -69,7 +69,7 @@ export const useVacancyCounts = (): VacancyCounts => {
         error,
         message: error instanceof Error ? error.message : 'Unknown error'
       });
-      return jobCategories.map(category => ({
+      return categories.map((category: JobCategory) => ({
         ...category,
         vacanciesCount: 0
       }));
