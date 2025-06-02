@@ -44,15 +44,17 @@ src/
 ## Запуск и сборка
 ```bash
 npm install
-npm run dev      # Локальная разработка
-npm run build    # Сборка production
+npm run dev      # Локальная разработка (Vite)
+npm run build    # Сборка production (Vite + TypeScript)
 npm run preview  # Просмотр production-сборки
 npm run test     # Запуск тестов (Vitest)
+npm run lint     # Проверка кода (ESLint)
 ```
 
 ## Тестирование
-- Все бизнес-утилиты покрыты unit-тестами (Vitest)
+- Все бизнес-утилиты покрыты unit-тестами (Vitest + JSDOM)
 - Типы строго проверяются TypeScript
+- ESLint обеспечивает качество кода
 
 ## Особенности
 - Вся бизнес-логика вакансий, фильтрации, подсчёта вынесена в Zustand store
