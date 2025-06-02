@@ -4,6 +4,13 @@ import { vacancies } from '../data/vacancies';
 import { filterVacancies } from '@utils/filters';
 import { logger } from '@utils/logger';
 
+/**
+ * Интерфейс для результатов фильтрации вакансий
+ * @interface VacancyFilters
+ * @property {typeof vacancies} filteredVacancies - Отфильтрованный список вакансий
+ * @property {number | null} categoryId - ID выбранной категории или null
+ * @property {number | null} cityId - ID выбранного города или null
+ */
 interface VacancyFilters {
   filteredVacancies: typeof vacancies;
   categoryId: number | null;
@@ -11,8 +18,20 @@ interface VacancyFilters {
 }
 
 /**
- * Хук для фильтрации вакансий по параметрам URL
- * @returns Отфильтрованные вакансии и информацию о фильтрах
+ * Хук для фильтрации вакансий на основе параметров URL.
+ * Поддерживает фильтрацию по категории и городу.
+ * 
+ * @returns {VacancyFilters} Объект с отфильтрованными вакансиями и информацией о фильтрах
+ * 
+ * @example
+ * ```tsx
+ * const { filteredVacancies, categoryId, cityId } = useVacancyFilters();
+ * ```
+ * 
+ * @remarks
+ * - Поддерживает как параметр categoryId, так и id в URL
+ * - Логирует предупреждения при некорректных ID
+ * - Использует мемоизацию для оптимизации производительности
  */
 export const useVacancyFilters = (): VacancyFilters => {
   const { categoryId, cityId, id } = useParams();

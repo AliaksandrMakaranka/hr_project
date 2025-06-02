@@ -5,6 +5,10 @@ import { ROUTES } from '@constants/routes';
 import { useVacancyStore } from '@store/vacancyStore';
 import type { Vacancy } from '../../types';
 
+/**
+ * Контейнер для списка вакансий
+ * @component
+ */
 const Container = styled.div`
   width: 100%;
   max-width: 1440px;
@@ -12,6 +16,10 @@ const Container = styled.div`
   padding: clamp(1rem, 5vw, 2rem);
 `;
 
+/**
+ * Сетка для отображения карточек вакансий
+ * @component
+ */
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -19,6 +27,10 @@ const Grid = styled.div`
   width: 100%;
 `;
 
+/**
+ * Карточка вакансии
+ * @component
+ */
 const VacancyCard = styled.div`
   background: white;
   border-radius: 12px;
@@ -33,18 +45,30 @@ const VacancyCard = styled.div`
   }
 `;
 
+/**
+ * Заголовок вакансии
+ * @component
+ */
 const Title = styled.h2`
   font-size: 1.25rem;
   color: #333;
   margin-bottom: 0.5rem;
 `;
 
+/**
+ * Название компании
+ * @component
+ */
 const Company = styled.div`
   font-size: 1rem;
   color: #666;
   margin-bottom: 0.5rem;
 `;
 
+/**
+ * Зарплата
+ * @component
+ */
 const Salary = styled.div`
   font-size: 1.125rem;
   color: #1976d2;
@@ -52,12 +76,20 @@ const Salary = styled.div`
   margin-bottom: 1rem;
 `;
 
+/**
+ * Местоположение
+ * @component
+ */
 const Location = styled.div`
   font-size: 0.875rem;
   color: #666;
   margin-bottom: 0.5rem;
 `;
 
+/**
+ * Контейнер для тегов
+ * @component
+ */
 const Tags = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -65,6 +97,10 @@ const Tags = styled.div`
   margin-top: 1rem;
 `;
 
+/**
+ * Тег вакансии
+ * @component
+ */
 const Tag = styled.span`
   background: #e3f2fd;
   color: #1976d2;
@@ -73,6 +109,10 @@ const Tag = styled.span`
   font-size: 0.875rem;
 `;
 
+/**
+ * Сообщение о загрузке
+ * @component
+ */
 const LoadingMessage = styled.div`
   text-align: center;
   padding: 2rem;
@@ -80,6 +120,10 @@ const LoadingMessage = styled.div`
   color: #666;
 `;
 
+/**
+ * Сообщение об ошибке
+ * @component
+ */
 const ErrorMessage = styled.div`
   text-align: center;
   padding: 2rem;
@@ -87,6 +131,10 @@ const ErrorMessage = styled.div`
   color: #d32f2f;
 `;
 
+/**
+ * Сообщение об отсутствии вакансий
+ * @component
+ */
 const EmptyMessage = styled.div`
   text-align: center;
   padding: 2rem;
@@ -94,6 +142,19 @@ const EmptyMessage = styled.div`
   color: #666;
 `;
 
+/**
+ * Компонент списка вакансий.
+ * Отображает сетку карточек вакансий с возможностью фильтрации по городу и категории.
+ * Включает статистику по количеству вакансий.
+ * 
+ * @component
+ * @returns {JSX.Element} Компонент списка вакансий
+ * 
+ * @example
+ * ```tsx
+ * <VacancyList />
+ * ```
+ */
 const VacancyList: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -180,6 +241,10 @@ const VacancyList: React.FC = () => {
   );
 };
 
+/**
+ * Контейнер для статистики
+ * @component
+ */
 const StatsContainer = styled.div`
   display: flex;
   gap: 2rem;
@@ -189,18 +254,30 @@ const StatsContainer = styled.div`
   border-radius: 8px;
 `;
 
+/**
+ * Элемент статистики
+ * @component
+ */
 const StatItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
+/**
+ * Метка статистики
+ * @component
+ */
 const StatLabel = styled.div`
   font-size: 0.875rem;
   color: #666;
   margin-bottom: 0.25rem;
 `;
 
+/**
+ * Значение статистики
+ * @component
+ */
 const StatValue = styled.div`
   font-size: 1.25rem;
   font-weight: 500;
