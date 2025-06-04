@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { VacanciesRepository } from '../api';
 import type { Vacancy, City, JobCategory } from '../types';
-import type { VacancyApplicationData } from '../types/api';
+import type { VacancyApplicationData, VacancyFilters } from '../types/api';
 
 interface VacancyState {
   // State
@@ -9,6 +9,7 @@ interface VacancyState {
   selectedVacancy: Vacancy | null;
   currentCity: City | null;
   currentCategory: JobCategory | null;
+  filters: VacancyFilters;
   loading: boolean;
   error: string | null;
   
@@ -16,6 +17,7 @@ interface VacancyState {
   setCurrentCity: (city: City | null) => void;
   setCurrentCategory: (category: JobCategory | null) => void;
   setSelectedVacancy: (vacancy: Vacancy | null) => void;
+  setFilters: (filters: Partial<VacancyFilters>) => void;
   fetchVacancies: () => Promise<void>;
   fetchVacancyById: (id: number) => Promise<void>;
   applyForVacancy: (vacancyId: number) => Promise<void>;
@@ -39,19 +41,29 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
   selectedVacancy: null,
   currentCity: null,
   currentCategory: null,
+  filters: {
+    city: undefined,
+    category: undefined,
+    employmentType: undefined,
+    salaryFrom: undefined,
+    salaryTo: undefined,
+    searchTerm: undefined,
+    sortBy: undefined,
+    sortOrder: undefined,
+    page: 1,
+    limit: 10,
+  },
   loading: false,
   error: null,
   
   // Actions
   setCurrentCity: (city) => {
     set({ currentCity: city });
-    // Automatically refetch vacancies when city changes
     get().fetchVacancies();
   },
   
   setCurrentCategory: (category) => {
     set({ currentCategory: category });
-    // Automatically refetch vacancies when category changes
     get().fetchVacancies();
   },
   
@@ -59,13 +71,20 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
   
   resetSelectedVacancy: () => set({ selectedVacancy: null }),
   
+  setFilters: (newFilters) => {
+    set(state => ({
+      filters: { ...state.filters, ...newFilters }
+    }));
+    get().fetchVacancies();
+  },
+
   fetchVacancies: async () => {
-    const { currentCity, currentCategory } = get();
+    const { filters } = get();
     set({ loading: true, error: null });
     
     try {
       const repository = new VacanciesRepository();
-      const response = await repository.getAll();
+      const response = await repository.getAll(filters);
       
       if ('error' in response && response.error) {
         set({ 
@@ -75,14 +94,7 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
         return;
       }
       
-      // Apply filters based on current city and category
-      const filteredVacancies = response.data.items.filter(vacancy => {
-        const cityMatch = !currentCity || vacancy.city?.id === currentCity.id;
-        const categoryMatch = !currentCategory || vacancy.category?.id === currentCategory.id;
-        return cityMatch && categoryMatch;
-      });
-      
-      set({ vacancies: filteredVacancies, loading: false });
+      set({ vacancies: response.data.items, loading: false });
     } catch (error) {
       set({ 
         error: error instanceof Error ? error.message : 'Failed to fetch vacancies',
@@ -139,20 +151,12 @@ export const useVacancyStore = create<VacancyState>((set, get) => ({
         error: error instanceof Error ? error.message : 'Failed to apply for vacancy',
         loading: false 
       });
-      throw error; // Re-throw to handle in the component
+      throw error;
     }
   },
   
   // Selectors
-  getFilteredVacancies: () => {
-    const { vacancies, currentCity, currentCategory } = get();
-    
-    return vacancies.filter(vacancy => {
-      const cityMatch = !currentCity || vacancy.city?.id === currentCity.id;
-      const categoryMatch = !currentCategory || vacancy.category?.id === currentCategory.id;
-      return cityMatch && categoryMatch;
-    });
-  },
+  getFilteredVacancies: () => get().vacancies,
   
   getVacancyById: (id: number) => {
     return get().vacancies.find(vacancy => vacancy.id === id);

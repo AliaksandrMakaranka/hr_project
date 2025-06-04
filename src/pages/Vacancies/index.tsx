@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ROUTES } from '../../constants/routes';
-import { vacancies as initialVacancies } from '../../data/vacancies';
 import type { City } from '../../types/city';
 import { jobCategories } from '../../data/categories/index';
 import {
@@ -23,53 +22,89 @@ import {
   VacancyDescription,
   NoResults
 } from './styles';
+import { useVacancyStore } from '../../store/vacancyStore';
+import type { VacancyFilters } from '../../types/api';
 
 const VacanciesPage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
 
-  // Создаем изменяемую копию вакансий и обновляем категории для проблемных вакансий
-  const vacancies = useMemo(() => {
-    const updatedVacancies = [...initialVacancies];
-    const monolithicCategory = jobCategories.find(c => c.id === 9);
+  const { 
+    vacancies,
+    filters,
+    loading,
+    error,
+    setFilters,
+    fetchVacancies,
+  } = useVacancyStore();
 
-    if (monolithicCategory) {
-      const betonshik = updatedVacancies.find(v => v.id === 10);
-      if (betonshik) betonshik.category = monolithicCategory;
+  React.useEffect(() => {
+    fetchVacancies();
+  }, [fetchVacancies]);
 
-      const armaturschik = updatedVacancies.find(v => v.id === 11);
-      if (armaturschik) armaturschik.category = monolithicCategory;
-    }
-
-    return updatedVacancies;
-  }, []); // Убраны ненужные зависимости, так как initialVacancies и jobCategories не меняются
-
-  // Получаем уникальные категории из импортированного массива
   const categories = useMemo(() => jobCategories, []);
-  
-  const cities = Array.from(
-    new Map(
-      vacancies
-        .filter((v): v is typeof v & { city: City } => v.city !== undefined)
-        .map(v => [v.city.id, v.city])
-    ).values()
-  );
+  const cities = useMemo(() => {
+    const uniqueCities = Array.from(
+      new Map(
+        vacancies
+          .filter((v): v is typeof v & { city: City } => v.city !== undefined)
+          .map(v => [v.city.id, v.city])
+      ).values()
+    );
+    return uniqueCities;
+  }, [vacancies]);
 
-  const filteredVacancies = vacancies.filter(vacancy => {
-    const matchesSearch = vacancy.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vacancy.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vacancy.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = !selectedCategory || 
-      (vacancy.category && String(vacancy.category.id) === selectedCategory);
-    
-    const matchesCity = !selectedCity || 
-      (vacancy.city && String(vacancy.city.id) === selectedCity);
-    
-    return matchesSearch && matchesCategory && matchesCity;
-  });
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFilters({ searchTerm: e.target.value, page: 1 });
+  };
+
+  const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ category: e.target.value || undefined, page: 1 });
+  };
+
+  const handleCityChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ city: e.target.value || undefined, page: 1 });
+  };
+
+  const handleEmploymentTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ employmentType: e.target.value || undefined, page: 1 });
+  };
+
+  const handleSalaryFromChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setFilters({ salaryFrom: isNaN(value) ? undefined : value, page: 1 });
+  };
+
+  const handleSalaryToChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setFilters({ salaryTo: isNaN(value) ? undefined : value, page: 1 });
+  };
+
+  const handleSortByChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ sortBy: e.target.value as VacancyFilters['sortBy'] || undefined, page: 1 });
+  };
+
+  const handleSortOrderToggle = () => {
+    const currentSortOrder = filters.sortOrder;
+    const newSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+    setFilters({ 
+      sortOrder: newSortOrder,
+      page: 1
+    });
+  };
+
+  const displayedVacancies = vacancies;
+
+  const employmentTypeOptions = [
+    { value: 'full-time', label: 'Полная занятость' },
+    { value: 'part-time', label: 'Частичная занятость' },
+    { value: 'contract', label: 'Контракт' },
+    { value: 'temporary', label: 'Временная работа' },
+  ];
+
+  const sortByOptions = [
+    { value: 'date', label: 'Дата' },
+    { value: 'salary', label: 'Зарплата' },
+  ];
 
   return (
     <Container>
@@ -81,20 +116,20 @@ const VacanciesPage: React.FC = () => {
           <SearchInput
             type="text"
             placeholder="Поиск по названию, компании или описанию"
-            value={searchQuery}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+            value={filters.searchTerm || ''}
+            onChange={handleSearchChange}
           />
         </FilterGroup>
 
         <FilterGroup>
           <FilterLabel>Категория</FilterLabel>
           <FilterSelect
-            value={selectedCategory}
-            onChange={(e: ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}
+            value={filters.category || ''}
+            onChange={handleCategoryChange}
           >
             <option value="">Все категории</option>
             {categories.map(category => (
-              <option key={category.id} value={category.id}>{category.name}</option>
+              <option key={category.id} value={category.name}>{category.name}</option>
             ))}
           </FilterSelect>
         </FilterGroup>
@@ -102,20 +137,83 @@ const VacanciesPage: React.FC = () => {
         <FilterGroup>
           <FilterLabel>Город</FilterLabel>
           <FilterSelect
-            value={selectedCity}
-            onChange={(e: ChangeEvent<HTMLSelectElement>) => setSelectedCity(e.target.value)}
+            value={filters.city || ''}
+            onChange={handleCityChange}
           >
             <option value="">Все города</option>
             {cities.map(city => (
-              <option key={city.id} value={city.id}>{city.name}</option>
+              <option key={city.id} value={city.name}>{city.name}</option>
             ))}
           </FilterSelect>
         </FilterGroup>
+
+        <FilterGroup>
+          <FilterLabel>Тип занятости</FilterLabel>
+          <FilterSelect
+            value={filters.employmentType || ''}
+            onChange={handleEmploymentTypeChange}
+          >
+            <option value="">Любой</option>
+            {employmentTypeOptions.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </FilterSelect>
+        </FilterGroup>
+
+        <FilterGroup>
+          <FilterLabel>Зарплата (PLN)</FilterLabel>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <SearchInput
+              type="number"
+              placeholder="от"
+              value={filters.salaryFrom || ''}
+              onChange={handleSalaryFromChange}
+              style={{ width: '80px' }}
+            />
+            <SearchInput
+              type="number"
+              placeholder="до"
+              value={filters.salaryTo || ''}
+              onChange={handleSalaryToChange}
+              style={{ width: '80px' }}
+            />
+          </div>
+        </FilterGroup>
+
+        <FilterGroup>
+          <FilterLabel>Сортировка</FilterLabel>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <FilterSelect
+              value={filters.sortBy || ''}
+              onChange={handleSortByChange}
+            >
+              <option value="">По умолчанию</option>
+              {sortByOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </FilterSelect>
+            <button
+              onClick={handleSortOrderToggle}
+              style={{
+                padding: '0.5rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                backgroundColor: '#f3f4f6',
+                cursor: 'pointer'
+              }}
+            >
+              {filters.sortOrder === 'desc' ? '↓' : '↑'}
+            </button>
+          </div>
+        </FilterGroup>
       </Filters>
 
-      {filteredVacancies.length > 0 ? (
+      {loading && <p>Загрузка вакансий...</p>}
+      {error && <p style={{ color: 'red' }}>Ошибка загрузки: {error}</p>}
+
+      {!loading && !error && displayedVacancies.length > 0 ? (
         <VacanciesGrid>
-          {filteredVacancies.map((vacancy, index) => (
+          {displayedVacancies.map((vacancy, index) => (
             <motion.div
               key={vacancy.id}
               initial={{ opacity: 0, y: 20 }}
@@ -132,12 +230,12 @@ const VacanciesPage: React.FC = () => {
             </motion.div>
           ))}
         </VacanciesGrid>
-      ) : (
+      ) : (!loading && !error && (
         <NoResults>
           <h3>Вакансии не найдены</h3>
           <p>Попробуйте изменить параметры поиска</p>
         </NoResults>
-      )}
+      ))}
     </Container>
   );
 };

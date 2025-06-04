@@ -26,12 +26,14 @@ export interface VacancyApplicationData {
 }
 
 export interface VacancyFilters {
-  category?: number;
-  city?: number;
+  city?: string;
+  category?: string;
   employmentType?: string;
-  experience?: string;
-  salary?: string;
-  search?: string;
+  salaryFrom?: number;
+  salaryTo?: number;
+  searchTerm?: string;
+  sortBy?: 'date' | 'salary';
+  sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
 }
