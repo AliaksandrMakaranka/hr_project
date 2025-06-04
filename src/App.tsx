@@ -18,6 +18,7 @@ import { ROUTES } from './constants/routes';
 import Footer from '@layouts/Footer';
 import CookieConsent from '@features/cookie-consent/CookieConsent';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import ScrollToTop from './components/ScrollToTop';
 
 const App: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const App: React.FC = () => {
           <Footer />
           <CookieConsent />
         </div>
+        <ScrollToTop />
       </Router>
     </ThemeProvider>
   );
