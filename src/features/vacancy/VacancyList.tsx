@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@constants/routes';
-import { useVacancyStore } from '@store/vacancyStore';
-import type { Vacancy } from '../../types';
+import { EmptyMessage, ErrorMessage, LoadingMessage } from '../../components/common/Messages';
+import { ROUTES } from '../../constants/routes';
+import { useVacancyStore } from '../../store/vacancyStore';
+import { VacancyCard } from '../VacancyCard';
 
 /**
  * Контейнер для списка вакансий
@@ -25,24 +25,6 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   width: 100%;
-`;
-
-/**
- * Карточка вакансии
- * @component
- */
-const VacancyCard = styled.div`
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
 `;
 
 /**
@@ -157,26 +139,11 @@ const EmptyMessage = styled.div`
  */
 const VacancyList: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    loading,
-    error,
-    fetchVacancies,
-    currentCity,
-    currentCategory,
-    getFilteredVacancies,
-    getVacancyStats
-  } = useVacancyStore();
+  const { vacancies, loading, error } = useVacancyStore();
 
-  useEffect(() => {
-    fetchVacancies();
-  }, [fetchVacancies, currentCity, currentCategory]);
-
-  const handleVacancyClick = (vacancy: Vacancy) => {
-    navigate(`${ROUTES.VACANCIES}/${vacancy.id}`);
+  const handleVacancyClick = (vacancyId: number) => {
+    navigate(`${ROUTES.VACANCIES}/${vacancyId}`);
   };
-
-  const filteredVacancies = getFilteredVacancies();
-  const stats = getVacancyStats();
 
   if (loading) {
     return <LoadingMessage>Loading vacancies...</LoadingMessage>;
@@ -186,12 +153,10 @@ const VacancyList: React.FC = () => {
     return <ErrorMessage>Error: {error}</ErrorMessage>;
   }
 
-  if (filteredVacancies.length === 0) {
+  if (vacancies.length === 0) {
     return (
       <EmptyMessage>
-        {currentCity || currentCategory
-          ? 'No vacancies found matching your criteria'
-          : 'No vacancies available at the moment'}
+        No vacancies available at the moment
       </EmptyMessage>
     );
   }
@@ -201,40 +166,17 @@ const VacancyList: React.FC = () => {
       <StatsContainer>
         <StatItem>
           <StatLabel>Total Vacancies:</StatLabel>
-          <StatValue>{stats.total}</StatValue>
+          <StatValue>{vacancies.length}</StatValue>
         </StatItem>
-        {currentCity && (
-          <StatItem>
-            <StatLabel>Vacancies in {currentCity.name}:</StatLabel>
-            <StatValue>{stats.byCity[currentCity.id] || 0}</StatValue>
-          </StatItem>
-        )}
-        {currentCategory && (
-          <StatItem>
-            <StatLabel>Vacancies in {currentCategory.name}:</StatLabel>
-            <StatValue>{stats.byCategory[currentCategory.id] || 0}</StatValue>
-          </StatItem>
-        )}
       </StatsContainer>
 
       <Grid>
-        {filteredVacancies.map((vacancy) => (
+        {vacancies.map((vacancy) => (
           <VacancyCard
             key={vacancy.id}
-            onClick={() => handleVacancyClick(vacancy)}
-          >
-            <Title>{vacancy.title}</Title>
-            <Company>{vacancy.company}</Company>
-            <Salary>{vacancy.salary}</Salary>
-            <Location>{vacancy.city?.name || 'Location not specified'}</Location>
-            {vacancy.tags && vacancy.tags.length > 0 && (
-              <Tags>
-                {vacancy.tags.map((tag, index) => (
-                  <Tag key={`${vacancy.id}-tag-${index}`}>{tag}</Tag>
-                ))}
-              </Tags>
-            )}
-          </VacancyCard>
+            vacancy={vacancy}
+            onClick={() => handleVacancyClick(vacancy.id)}
+          />
         ))}
       </Grid>
     </Container>

@@ -24,6 +24,7 @@ import {
 } from './styles';
 import { useVacancyStore } from '../../store/vacancyStore';
 import type { VacancyFilters } from '../../types/api';
+import { calculateSalary } from '@utils/salaryUtils';
 
 const VacanciesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -213,22 +214,27 @@ const VacanciesPage: React.FC = () => {
 
       {!loading && !error && displayedVacancies.length > 0 ? (
         <VacanciesGrid>
-          {displayedVacancies.map((vacancy, index) => (
-            <motion.div
-              key={vacancy.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
-              <VacancyCard onClick={() => navigate(ROUTES.VACANCY(vacancy.id))}>
-                <VacancyTitle>{vacancy.title}</VacancyTitle>
-                <VacancyCompany>{vacancy.company}</VacancyCompany>
-                <VacancyLocation>{vacancy.city?.name || 'Город не указан'}</VacancyLocation>
-                <VacancySalary>{vacancy.salary}</VacancySalary>
-                <VacancyDescription>{vacancy.description}</VacancyDescription>
-              </VacancyCard>
-            </motion.div>
-          ))}
+          {displayedVacancies.map((vacancy, index) => {
+            const salaryData = calculateSalary(vacancy.salaryPerHour, vacancy.currency);
+            const formattedSalary = salaryData ? `${salaryData.hourly} (Брутто)` : 'Зарплата не указана';
+
+            return (
+              <motion.div
+                key={vacancy.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <VacancyCard onClick={() => navigate(ROUTES.VACANCY(vacancy.id))}>
+                  <VacancyTitle>{vacancy.title}</VacancyTitle>
+                  <VacancyCompany>{vacancy.company}</VacancyCompany>
+                  <VacancyLocation>{vacancy.city?.name || 'Город не указан'}</VacancyLocation>
+                  <VacancySalary>{formattedSalary}</VacancySalary>
+                  <VacancyDescription>{vacancy.description}</VacancyDescription>
+                </VacancyCard>
+              </motion.div>
+            );
+          })}
         </VacanciesGrid>
       ) : (!loading && !error && (
         <NoResults>

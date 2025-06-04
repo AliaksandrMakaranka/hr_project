@@ -6,6 +6,8 @@ export interface Vacancy {
   title: string;
   company: string;
   salary: string;
+  salaryPerHour?: number;
+  currency?: string;
   description: string;
   experience: string;
   employmentType: string;

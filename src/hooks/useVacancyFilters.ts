@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { Logger } from '../utils/Logger';
+import { filterVacancies } from '../utils/filters';
 import { vacancies } from '../data/vacancies';
-import { filterVacancies } from '@utils/filters';
-import { logger } from '@utils/logger';
 
 /**
  * Интерфейс для результатов фильтрации вакансий
@@ -35,33 +35,32 @@ interface VacancyFilters {
  */
 export const useVacancyFilters = (): VacancyFilters => {
   const { categoryId, cityId, id } = useParams();
+  const logger = useMemo(() => Logger.getInstance(), []);
 
-  // Поддержка как categoryId, так и id для универсальности
-  const categoryIdNum = useMemo(() => {
-    const paramToParse = categoryId || id;
-    if (!paramToParse) return null;
-
-    const parsed = parseInt(paramToParse, 10);
+  const parseId = useCallback((value: string | undefined): number | null => {
+    if (!value) return null;
+    const parsed = parseInt(value, 10);
     if (isNaN(parsed)) {
-      logger.warn('Invalid category ID in URL', { paramToParse });
+      logger.warn('Invalid ID in URL', { value });
       return null;
     }
     return parsed;
-  }, [categoryId, id]);
+  }, [logger]);
 
-  const cityIdNum = useMemo(() => {
-    if (!cityId) return null;
-    const parsed = parseInt(cityId, 10);
-    if (isNaN(parsed)) {
-      logger.warn('Invalid city ID in URL', { cityId });
-      return null;
-    }
-    return parsed;
-  }, [cityId]);
+  const categoryIdNum = useMemo(() => 
+    parseId(categoryId || id),
+    [categoryId, id, parseId]
+  );
 
-  const filteredVacancies = useMemo(() => {
-    return filterVacancies(vacancies, categoryIdNum, cityIdNum);
-  }, [categoryIdNum, cityIdNum]);
+  const cityIdNum = useMemo(() => 
+    parseId(cityId),
+    [cityId, parseId]
+  );
+
+  const filteredVacancies = useMemo(() => 
+    filterVacancies(vacancies, categoryIdNum, cityIdNum),
+    [categoryIdNum, cityIdNum]
+  );
 
   return {
     filteredVacancies,

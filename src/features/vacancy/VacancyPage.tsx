@@ -17,6 +17,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ROUTES, NAVIGATION } from '@constants/routes';
 import { useVacancyStore } from '@store/vacancyStore';
 import { logger } from '@utils/logger';
+import { calculateSalary, formatSalaryDisplay } from '@utils/salaryUtils';
 
 // Стилизованные компоненты
 const Container = styled.div`
@@ -236,6 +237,16 @@ const EmptyMessage = styled.div`
   color: #666;
 `;
 
+const SalaryBlock = styled.pre`
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: #333;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  line-height: 1.6;
+  background: #f9f9f9;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border-radius: 8px;
+`;
+
 const VacancyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -245,29 +256,14 @@ const VacancyPage: React.FC = () => {
     error,
     fetchVacancyById,
     resetSelectedVacancy,
-    applyForVacancy
+    applyForVacancy,
   } = useVacancyStore();
 
   useEffect(() => {
-    const loadVacancy = async () => {
-      if (!id) {
-        logger.warn('No vacancy ID provided');
-        resetSelectedVacancy();
-        return;
-      }
+    if (id) {
+      fetchVacancyById(parseInt(id));
+    }
 
-      try {
-        const vacancyId = parseInt(id, 10);
-        await fetchVacancyById(vacancyId);
-      } catch (err) {
-        logger.error('Error loading vacancy', { error: err });
-        resetSelectedVacancy();
-      }
-    };
-
-    loadVacancy();
-
-    // Cleanup function to clear selected vacancy when component unmounts
     return () => {
       resetSelectedVacancy();
     };
@@ -332,6 +328,10 @@ const VacancyPage: React.FC = () => {
   const requirements = selectedVacancy.requirements || [];
   const benefits = selectedVacancy.benefits || [];
 
+  // Calculate salary data
+  const salaryData = calculateSalary(selectedVacancy.salaryPerHour, selectedVacancy.currency);
+  const formattedSalary = formatSalaryDisplay(salaryData);
+
   return (
     <Container>
       <NavButtonsContainer>
@@ -346,7 +346,12 @@ const VacancyPage: React.FC = () => {
       <Header>
         <Title>{selectedVacancy.title}</Title>
         <CompanyInfo>{selectedVacancy.company}</CompanyInfo>
-        <Salary>{selectedVacancy.salary}</Salary>
+        {/* Display original salary string if needed, or remove */}
+        {/* <Salary>{selectedVacancy.salary}</Salary> */}
+        
+        {/* Display calculated salary block */}
+        <SalaryBlock>{formattedSalary}</SalaryBlock>
+
         {selectedVacancy.tags && selectedVacancy.tags.length > 0 && (
           <TagsContainer>
             {selectedVacancy.tags.map((tag, index) => (

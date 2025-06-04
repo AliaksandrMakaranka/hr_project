@@ -1,24 +1,29 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { ErrorHandler } from '../utils/ErrorHandler';
+import { Logger } from '../utils/Logger';
 
 /**
  * Props для компонента ErrorBoundary
  * @interface Props
  * @property {ReactNode} children - Дочерние компоненты, которые будут обёрнуты в ErrorBoundary
  * @property {ReactNode} [fallback] - Опциональный компонент, который будет отображен при возникновении ошибки
+ * @property {Function} [onError] - Функция, которая будет вызываться при возникновении ошибки
  */
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 /**
  * Состояние компонента ErrorBoundary
  * @interface State
  * @property {boolean} hasError - Флаг, указывающий на наличие ошибки
+ * @property {Error | null} error - Объект ошибки
  */
 interface State {
   hasError: boolean;
+  error: Error | null;
 }
 
 /**
@@ -36,7 +41,8 @@ interface State {
  * ```
  */
 export class ErrorBoundary extends Component<Props, State> {
-  private errorHandler: ErrorHandler;
+  private readonly errorHandler: ErrorHandler;
+  private readonly logger: Logger;
 
   /**
    * Создает экземпляр ErrorBoundary
@@ -44,16 +50,18 @@ export class ErrorBoundary extends Component<Props, State> {
    */
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
     this.errorHandler = ErrorHandler.getInstance();
+    this.logger = Logger.getInstance();
   }
 
   /**
    * Статический метод для обновления состояния при возникновении ошибки
-   * @returns {State} Новое состояние с флагом hasError = true
+   * @param {Error} error - Объект ошибки
+   * @returns {State} Новое состояние с флагом hasError = true и сохраненной ошибкой
    */
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   /**
@@ -63,6 +71,8 @@ export class ErrorBoundary extends Component<Props, State> {
    */
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.errorHandler.handleError({ error, errorInfo });
+    this.props.onError?.(error, errorInfo);
+    this.logger.error('Error caught by boundary', { error, errorInfo });
   }
 
   /**
@@ -72,13 +82,14 @@ export class ErrorBoundary extends Component<Props, State> {
   render(): ReactNode {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div style={{
-          padding: '20px',
-          textAlign: 'center',
-          color: '#666',
-        }}>
+        <div className="error-boundary" data-testid="error-boundary">
           <h2>Что-то пошло не так...</h2>
           <p>Пожалуйста, попробуйте обновить страницу</p>
+          {process.env.NODE_ENV === 'development' && this.state.error && (
+            <pre className="error-details">
+              {this.state.error.message}
+            </pre>
+          )}
         </div>
       );
     }

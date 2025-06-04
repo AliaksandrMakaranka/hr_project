@@ -9,6 +9,8 @@ export const vacancies: Vacancy[] = [
     company: 'BUDEX Sp. z o.o.',
     city: cities[0], // Варшава
     salary: 'от 25 PLN/час',
+    salaryPerHour: 32.5,
+    currency: 'PLN',
     description: 'Требуется опытный строитель-монтажник для работы на строительных объектах в Варшаве. Обязанности включают монтаж конструкций, работу с инструментами, выполнение строительных работ.',
     category: jobCategories.find(c => c.id === 1)!, // Строительство (ID 1)
     tags: ['Монтаж', 'Строительство', 'Варшава'],
@@ -21,6 +23,8 @@ export const vacancies: Vacancy[] = [
     company: 'CONSTRUCTION POLAND',
     city: cities[1], // Краков
     salary: 'от 23 PLN/час',
+    salaryPerHour: 29.9,
+    currency: 'PLN',
     description: 'Ищем опытных каменщиков для работы на строительных объектах в Кракове. Требуется опыт работы с кирпичом и другими строительными материалами.',
     category: jobCategories.find(c => c.id === 2)!, // Каменщики (ID 2)
     tags: ['Каменщик', 'Строительство', 'Краков'],
@@ -33,6 +37,8 @@ export const vacancies: Vacancy[] = [
     company: 'METAL WORK',
     city: cities[2], // Вроцлав
     salary: 'от 28 PLN/час',
+    salaryPerHour: 36.4,
+    currency: 'PLN',
     description: 'Требуется квалифицированный сварщик для работы на металлоконструкциях. Необходим опыт работы с различными видами сварки.',
     category: jobCategories.find(c => c.id === 3)!, // Сварщики (ID 3)
     tags: ['Сварка', 'Металл', 'Вроцлав'],
@@ -45,6 +51,8 @@ export const vacancies: Vacancy[] = [
     company: 'WOOD CRAFT',
     city: cities[3], // Познань
     salary: 'от 24 PLN/час',
+    salaryPerHour: 31.2,
+    currency: 'PLN',
     description: 'Ищем опытных плотников для работы с деревянными конструкциями. Требуется знание различных пород дерева и техник обработки.',
     category: jobCategories.find(c => c.id === 1)!, // Плотники (ID 1)
     tags: ['Плотник', 'Дерево', 'Познань'],
@@ -57,6 +65,8 @@ export const vacancies: Vacancy[] = [
     company: 'ELECTRO SERVICE',
     city: cities[4], // Гданьск
     salary: 'от 26 PLN/час',
+    salaryPerHour: 33.8,
+    currency: 'PLN',
     description: 'Требуется квалифицированный электрик для монтажа и обслуживания электрических систем. Необходим опыт работы с различным электрооборудованием.',
     category: jobCategories.find(c => c.id === 4)!, // Электрики (ID 4)
     tags: ['Электрика', 'Монтаж', 'Гданьск'],
@@ -69,6 +79,8 @@ export const vacancies: Vacancy[] = [
     company: 'PLUMBING PRO',
     city: cities[5], // Лодзь
     salary: 'от 25 PLN/час',
+    salaryPerHour: 32.5,
+    currency: 'PLN',
     description: 'Ищем опытных сантехников для установки и обслуживания сантехнического оборудования. Требуется знание современных систем водоснабжения и отопления.',
     category: jobCategories.find(c => c.id === 8)!, // Сантехники (ID 8)
     tags: ['Сантехника', 'Монтаж', 'Лодзь'],
@@ -81,6 +93,8 @@ export const vacancies: Vacancy[] = [
     company: 'PAINT MASTERS',
     city: cities[0], // Варшава
     salary: 'от 22 PLN/час',
+    salaryPerHour: 28.6,
+    currency: 'PLN',
     description: 'Требуется опытный маляр для внутренних и наружных работ. Необходим опыт работы с различными видами красок и отделочных материалов.',
     category: jobCategories.find(c => c.id === 5)!, // Отделочники (ID 5)
     tags: ['Маляр', 'Отделка', 'Варшава'],
@@ -93,6 +107,8 @@ export const vacancies: Vacancy[] = [
     company: 'PLASTER PRO',
     city: cities[1], // Краков
     salary: 'от 23 PLN/час',
+    salaryPerHour: 29.9,
+    currency: 'PLN',
     description: 'Ищем квалифицированных штукатуров для выполнения внутренних и наружных работ. Требуется опыт работы с различными видами штукатурных смесей.',
     category: jobCategories.find(c => c.id === 5)!, // Отделочники (ID 5)
     tags: ['Штукатур', 'Отделка', 'Краков'],
@@ -105,6 +121,8 @@ export const vacancies: Vacancy[] = [
     company: 'ROOF MASTERS',
     city: cities[2], // Вроцлав
     salary: 'от 27 PLN/час',
+    salaryPerHour: 35.1,
+    currency: 'PLN',
     description: 'Требуется опытный кровельщик для работы с различными видами кровельных материалов. Необходим опыт монтажа крыш и кровельных систем.',
     category: jobCategories.find(c => c.id === 7)!, // Кровельщики (ID 7)
     tags: ['Кровля', 'Монтаж', 'Вроцлав'],
@@ -117,6 +135,8 @@ export const vacancies: Vacancy[] = [
     company: 'CONCRETE PRO',
     city: cities[3], // Познань
     salary: 'от 24 PLN/час',
+    salaryPerHour: 31.2,
+    currency: 'PLN',
     description: 'Ищем квалифицированных бетонщиков для работы с бетонными конструкциями. Требуется опыт работы с различными марками бетона.',
     category: jobCategories.find(c => c.id === 1)!, // Строительство (ID 1)
     tags: ['Бетон', 'Строительство', 'Познань'],
@@ -129,6 +149,8 @@ export const vacancies: Vacancy[] = [
     company: 'STEEL CONSTRUCTION',
     city: cities[4], // Гданьск
     salary: 'от 25 PLN/час',
+    salaryPerHour: 32.5,
+    currency: 'PLN',
     description: 'Требуется опытный арматурщик для работы с металлической арматурой. Необходим опыт вязки арматуры и работы с чертежами.',
     category: jobCategories.find(c => c.id === 1)!, // Строительство (ID 1)
     tags: ['Арматура', 'Строительство', 'Гданьск'],
@@ -141,6 +163,8 @@ export const vacancies: Vacancy[] = [
     company: 'FACADE PRO',
     city: cities[5], // Лодзь
     salary: 'от 26 PLN/час',
+    salaryPerHour: 33.8,
+    currency: 'PLN',
     description: 'Ищем квалифицированных монтажников фасадов. Требуется опыт работы с различными видами фасадных систем.',
     category: jobCategories.find(c => c.id === 5)!, // Отделочники (ID 5)
     tags: ['Фасад', 'Монтаж', 'Лодзь'],
@@ -153,6 +177,8 @@ export const vacancies: Vacancy[] = [
     company: 'BUILD TEAM',
     city: cities[0], // Варшава
     salary: 'от 21 PLN/час',
+    salaryPerHour: 27.3,
+    currency: 'PLN',
     description: 'Требуются строительные рабочие для выполнения различных строительных работ. Опыт работы приветствуется.',
     category: jobCategories.find(c => c.id === 6)!, // Подсобные рабочие (ID 6)
     tags: ['Строительство', 'Разнорабочий', 'Варшава'],
@@ -165,6 +191,8 @@ export const vacancies: Vacancy[] = [
     company: 'WINDOW PRO',
     city: cities[1], // Краков
     salary: 'от 25 PLN/час',
+    salaryPerHour: 32.5,
+    currency: 'PLN',
     description: 'Ищем опытных монтажников окон. Требуется опыт установки пластиковых и деревянных окон.',
     category: jobCategories.find(c => c.id === 5)!, // Отделочники (ID 5)
     tags: ['Окна', 'Монтаж', 'Краков'],
@@ -177,6 +205,8 @@ export const vacancies: Vacancy[] = [
     company: 'ENGINEERING PRO',
     city: cities[2], // Вроцлав
     salary: 'от 35 PLN/час',
+    salaryPerHour: 45.5,
+    currency: 'PLN',
     description: 'Требуется строительный инженер для контроля и управления строительными проектами. Необходим опыт работы и знание строительных норм.',
     category: jobCategories.find(c => c.id === 10)!,
     tags: ['Инженерия', 'Управление', 'Вроцлав'],
@@ -189,6 +219,8 @@ export const vacancies: Vacancy[] = [
     company: 'VENT PRO',
     city: cities[3], // Познань
     salary: 'от 26 PLN/час',
+    salaryPerHour: 33.8,
+    currency: 'PLN',
     description: 'Ищем квалифицированных монтажников вентиляционных систем. Требуется опыт работы с системами вентиляции и кондиционирования.',
     category: jobCategories.find(c => c.id === 5)!, // Отделочники (ID 5)
     tags: ['Вентиляция', 'Монтаж', 'Познань'],
@@ -201,6 +233,8 @@ export const vacancies: Vacancy[] = [
     company: 'TECH PRO',
     city: cities[4], // Гданьск
     salary: 'от 28 PLN/час',
+    salaryPerHour: 36.4,
+    currency: 'PLN',
     description: 'Требуется строительный техник для обслуживания строительной техники. Необходим опыт работы с различными видами строительного оборудования.',
     category: jobCategories.find(c => c.id === 6)!, // Подсобные рабочие (ID 6)
     tags: ['Техника', 'Обслуживание', 'Гданьск'],
@@ -213,6 +247,8 @@ export const vacancies: Vacancy[] = [
     company: 'SECURITY PRO',
     city: cities[5], // Лодзь
     salary: 'от 27 PLN/час',
+    salaryPerHour: 35.1,
+    currency: 'PLN',
     description: 'Ищем опытных монтажников систем безопасности. Требуется опыт установки систем видеонаблюдения и контроля доступа.',
     category: jobCategories.find(c => c.id === 1)!, // Строительство (ID 1)
     tags: ['Безопасность', 'Монтаж', 'Лодзь'],
@@ -225,6 +261,8 @@ export const vacancies: Vacancy[] = [
     company: 'CONSTRUCTION LEAD',
     city: cities[0], // Варшава
     salary: 'от 32 PLN/час',
+    salaryPerHour: 41.6,
+    currency: 'PLN',
     description: 'Требуется опытный прораб для управления строительной бригадой. Необходим опыт руководства строительными работами.',
     category: jobCategories.find(c => c.id === 10)!,
     tags: ['Управление', 'Строительство', 'Варшава'],
@@ -237,6 +275,8 @@ export const vacancies: Vacancy[] = [
     company: 'ELEVATOR PRO',
     city: cities[1], // Краков
     salary: 'от 30 PLN/час',
+    salaryPerHour: 39,
+    currency: 'PLN',
     description: 'Ищем квалифицированных монтажников лифтового оборудования. Требуется опыт установки и обслуживания лифтов.',
     category: jobCategories.find(c => c.id === 1)!, // Строительство (ID 1)
     tags: ['Лифты', 'Монтаж', 'Краков'],

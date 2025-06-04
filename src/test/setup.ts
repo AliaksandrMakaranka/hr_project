@@ -3,6 +3,8 @@ import { vi } from 'vitest';
 import React from 'react';
 import { theme } from '../theme';
 import { DefaultTheme } from 'styled-components';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
 
 // Mock react-router-dom
 vi.mock('react-router-dom', () => ({
@@ -95,4 +97,9 @@ vi.mock('styled-components', async () => {
 //   jobCategories: [
 //     { id: 1, name: 'IT', vacanciesCount: 2 }
 //   ]
-// })); 
+// }));
+
+// Автоматическая очистка после каждого теста
+afterEach(() => {
+  cleanup();
+}); 

@@ -1,16 +1,12 @@
-import { ErrorInfo } from 'react';
-
-export interface ErrorDetails {
-  error: Error;
-  errorInfo?: ErrorInfo;
-  context?: Record<string, unknown>;
-}
+import { Logger } from './Logger';
+import { AppError, ValidationError, NotFoundError, ApiError } from './errors';
 
 export class ErrorHandler {
   private static instance: ErrorHandler;
+  private logger: Logger;
 
   private constructor() {
-    this.setupGlobalErrorHandlers();
+    this.logger = Logger.getInstance();
   }
 
   public static getInstance(): ErrorHandler {
@@ -20,67 +16,37 @@ export class ErrorHandler {
     return ErrorHandler.instance;
   }
 
-  private setupGlobalErrorHandlers(): void {
-    window.onerror = (message, source, lineno, colno, error) => {
-      this.handleError({
-        error: error || new Error(message as string),
-        context: {
-          source,
-          lineno,
-          colno,
-        },
-      });
-      return false;
-    };
-
-    window.addEventListener('unhandledrejection', (event) => {
-      this.handleError({
-        error: event.reason instanceof Error ? event.reason : new Error(String(event.reason)),
-        context: {
-          type: 'unhandledrejection',
-        },
-      });
-    });
+  public handleError(error: unknown): void {
+    if (error instanceof AppError) {
+      this.handleAppError(error);
+    } else if (error instanceof Error) {
+      this.handleGenericError(error);
+    } else {
+      this.handleUnknownError(error);
+    }
   }
 
-  public handleError(details: ErrorDetails): void {
-    const { error, errorInfo, context } = details;
-    
-    // Log to console
-    console.error('Error occurred:', {
-      message: error.message,
-      stack: error.stack,
-      componentStack: errorInfo?.componentStack,
-      context,
-    });
-
-    // TODO: Add integration with error tracking services like Sentry or LogRocket
-    // Example:
-    // if (process.env.NODE_ENV === 'production') {
-    //   Sentry.captureException(error, {
-    //     extra: {
-    //       errorInfo,
-    //       context,
-    //     },
-    //   });
-    // }
+  private handleAppError(error: AppError): void {
+    switch (error.constructor) {
+      case ValidationError:
+        this.logger.warn('Validation error', { error });
+        break;
+      case NotFoundError:
+        this.logger.warn('Not found error', { error });
+        break;
+      case ApiError:
+        this.logger.error('API error', { error });
+        break;
+      default:
+        this.logger.error('Application error', { error });
+    }
   }
 
-  public handleApiError(error: unknown): { message: string; status?: number } {
-    if (error instanceof Error) {
-      this.handleError({ error });
-      return { message: error.message };
-    }
+  private handleGenericError(error: Error): void {
+    this.logger.error('Generic error', { error });
+  }
 
-    if (error instanceof Response) {
-      return {
-        message: `HTTP Error: ${error.status}`,
-        status: error.status,
-      };
-    }
-
-    return {
-      message: 'An unknown error occurred',
-    };
+  private handleUnknownError(error: unknown): void {
+    this.logger.error('Unknown error', { error });
   }
 } 
