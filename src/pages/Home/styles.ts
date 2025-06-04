@@ -7,13 +7,13 @@ export const Container = styled.div`
 
 export const Hero = styled.section`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url('/images/hero-bg.jpg') center/cover no-repeat;
+    url('/images/cities/main.jpg') center/cover no-repeat;
   height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: #FFFFFF;
   padding: ${({ theme }) => theme.spacing.xl};
 `;
 
@@ -100,8 +100,8 @@ export const AdvantageCard = styled.div`
 
 export const CTASection = styled.section`
   padding: ${({ theme }) => theme.spacing.xxl} ${({ theme }) => theme.spacing.xl};
-  background-color: ${({ theme }) => theme.colors.construction.safety};
-  color: ${({ theme }) => theme.colors.textPrimary};
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.background.light};
   text-align: center;
 
   div {
@@ -114,8 +114,8 @@ export const CTASection = styled.section`
 `;
 
 export const CTAButton = styled.button`
-  background-color: ${({ theme }) => theme.colors.textPrimary};
-  color: ${({ theme }) => theme.colors.construction.safety};
+  background-color: ${({ theme }) => theme.colors.background.dark};
+  color: ${({ theme }) => theme.colors.background.light};
   border: none;
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xl};
   font-size: ${({ theme }) => theme.typography.body};
@@ -131,8 +131,8 @@ export const CTAButton = styled.button`
 
 export const CTAButtonSecondary = styled(CTAButton)`
   background-color: transparent;
-  border: 2px solid ${({ theme }) => theme.colors.textPrimary};
-  color: ${({ theme }) => theme.colors.textPrimary};
+  border: 2px solid ${({ theme }) => theme.colors.background.light};
+  color: ${({ theme }) => theme.colors.background.light};
 `;
 
 export const SectionTitle = styled.h2`

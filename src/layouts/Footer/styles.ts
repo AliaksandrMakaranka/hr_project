@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.footer`
-  background-color: ${({ theme }) => theme.colors.construction.steel};
+  background-color: ${({ theme }) => theme.colors.background.main};
   color: ${({ theme }) => theme.colors.textPrimary};
   padding: ${({ theme }) => theme.spacing.xl} 0;
   margin-top: ${({ theme }) => theme.spacing.xxl};
@@ -33,7 +33,7 @@ export const FooterSection = styled.section`
 export const FooterTitle = styled.h3`
   font-size: ${({ theme }) => theme.typography.subtitle};
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.construction.safety};
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
@@ -43,7 +43,7 @@ export const FooterLink = styled.a`
   transition: color ${({ theme }) => theme.transitions.fast};
 
   &:hover {
-    color: ${({ theme }) => theme.colors.construction.safety};
+    color: ${({ theme }) => theme.colors.textSecondary};
   }
 `;
 
@@ -64,6 +64,6 @@ export const SocialLink = styled.a`
   transition: color ${({ theme }) => theme.transitions.fast};
 
   &:hover {
-    color: ${({ theme }) => theme.colors.construction.safety};
+    color: ${({ theme }) => theme.colors.textSecondary};
   }
 `; 

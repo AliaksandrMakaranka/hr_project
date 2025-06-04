@@ -64,7 +64,7 @@ export const SearchInput = styled.input`
 export const VacanciesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const VacancyCard = styled.div`
@@ -72,8 +72,12 @@ export const VacancyCard = styled.div`
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid ${({ theme }) => theme.colors.border};
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
 
   &:hover {
     transform: translateY(-4px);
@@ -108,9 +112,10 @@ export const VacancyDescription = styled.p`
   color: #666;
   line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex-grow: 1;
 `;
 
 export const VacancyTags = styled.div`

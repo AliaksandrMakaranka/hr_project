@@ -94,7 +94,7 @@ export const theme: DefaultTheme = {
     background: {
       main: '#F5F5F5',
       dark: '#2C2C2C',
-      light: '#FFFFFF',
+      light: '#f5f7fa',
     },
     border: UI.COLORS.BORDER,
     shadow: UI.COLORS.SHADOW,
