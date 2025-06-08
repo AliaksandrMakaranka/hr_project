@@ -1,8 +1,7 @@
-import type { Vacancy } from '../types';
-import type { VacancyApplicationData, VacancyFilters, VacanciesResponse } from '../types/api';
+import { logger } from '@utils/Logger';
 import { vacancies as mockVacancies } from '../data/vacancies';
-import { logger } from '@utils/logger';
-import type { ApiResult } from './client';
+import type { Vacancy } from '../types';
+import type { VacanciesResponse, VacancyApplicationData, VacancyFilters } from '../types/api';
 
 // Вспомогательная функция для извлечения числового значения зарплаты из строки
 const parseSalary = (salaryString: string | undefined): number | null => {
@@ -20,9 +19,9 @@ export class VacanciesRepository {
    * @param filters Optional filters for vacancies
    * @returns Promise with paginated vacancies response
    */
-  async getAll(filters?: VacancyFilters): Promise<ApiResult<VacanciesResponse>> {
+  async getAll(filters?: VacancyFilters): Promise<VacanciesResponse> {
     logger.debug('Fetching all vacancies', { filters });
-    
+
     // В реальном приложении здесь формировался бы URL с query-параметрами:
     // const params = new URLSearchParams();
     // if (filters?.city) params.append('city', filters.city);
@@ -44,11 +43,11 @@ export class VacanciesRepository {
         let filteredVacancies = [...mockVacancies]; // Создаем копию для фильтрации и сортировки
 
         // Фильтрация
-        if (filters?.category) {
-          filteredVacancies = filteredVacancies.filter(vacancy => vacancy.category?.name === filters.category); // Фильтр по названию категории
+        if (filters?.categoryId) {
+          filteredVacancies = filteredVacancies.filter(vacancy => vacancy.category?.id === filters.categoryId);
         }
-        if (filters?.city) {
-          filteredVacancies = filteredVacancies.filter(vacancy => vacancy.city?.name === filters.city); // Фильтр по названию города
+        if (filters?.cityId) {
+          filteredVacancies = filteredVacancies.filter(vacancy => vacancy.city?.id === filters.cityId);
         }
         if (filters?.employmentType) {
           filteredVacancies = filteredVacancies.filter(vacancy => vacancy.employmentType === filters.employmentType);
@@ -69,7 +68,7 @@ export class VacanciesRepository {
         }
         if (filters?.searchTerm) {
           const lowerCaseSearchTerm = filters.searchTerm.toLowerCase();
-          filteredVacancies = filteredVacancies.filter(vacancy => 
+          filteredVacancies = filteredVacancies.filter(vacancy =>
             vacancy.title.toLowerCase().includes(lowerCaseSearchTerm) ||
             vacancy.description.toLowerCase().includes(lowerCaseSearchTerm)
           );
@@ -103,13 +102,11 @@ export class VacanciesRepository {
         const items = filteredVacancies.slice((page - 1) * limit, page * limit);
 
         resolve({
-          data: {
-            items,
-            total,
-            page,
-            limit,
-            totalPages: Math.ceil(total / limit)
-          }
+          items,
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit)
         });
       }, 500);
     });
@@ -120,9 +117,9 @@ export class VacanciesRepository {
    * @param id Vacancy ID
    * @returns Promise with vacancy data or null if not found
    */
-  async getById(id: number): Promise<ApiResult<Vacancy | null>> {
+  async getById(id: number): Promise<Vacancy | null> {
     logger.debug('Fetching vacancy by ID', { id });
-    
+
     // In a real app, this would be an API call
     // return apiClient.get<Vacancy | null>(`${API_BASE_URL}/${id}`);
 
@@ -130,15 +127,10 @@ export class VacanciesRepository {
       setTimeout(() => {
         const vacancy = mockVacancies.find(v => v.id === id) || null;
         if (!vacancy) {
-          resolve({
-            error: {
-              message: 'Vacancy not found',
-              status: 404
-            }
-          });
+          resolve(null);
           return;
         }
-        resolve({ data: vacancy });
+        resolve(vacancy);
       }, 500);
     });
   }
@@ -149,16 +141,16 @@ export class VacanciesRepository {
    * @param applicationData Application data
    * @returns Promise with success status
    */
-  async apply(vacancyId: number, applicationData: VacancyApplicationData): Promise<ApiResult<boolean>> {
+  async apply(vacancyId: number, applicationData: VacancyApplicationData): Promise<boolean> {
     logger.debug('Applying for vacancy', { vacancyId, applicationData });
-    
+
     // In a real app, this would be an API call
     // return apiClient.post<boolean>(`${API_BASE_URL}/${vacancyId}/apply`, applicationData);
 
     return new Promise((resolve) => {
       setTimeout(() => {
         logger.info('Application submitted successfully', { vacancyId });
-        resolve({ data: true });
+        resolve(true);
       }, 500);
     });
   }

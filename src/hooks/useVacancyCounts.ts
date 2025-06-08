@@ -1,10 +1,10 @@
-import { useMemo, useState, useEffect } from 'react';
-import { vacancies } from '../data/vacancies';
-import { jobCategories as categories } from '../data/categories/index';
-import { updateCategoriesWithVacancyCounts } from '@utils/filters';
 import { getCities } from '@api/cities';
+import { logger } from '@utils/Logger';
+import { updateCategoriesWithVacancyCounts } from '@utils/filters';
+import { useEffect, useMemo, useState } from 'react';
+import { jobCategories as categories } from '../data/categories/index';
+import { vacancies } from '../data/vacancies';
 import type { City, JobCategory } from '../types';
-import { logger } from '@utils/logger';
 
 interface VacancyCounts {
   categoriesWithCounts: (JobCategory & { vacanciesCount: number })[];
@@ -57,7 +57,7 @@ export const useVacancyCounts = (): VacancyCounts => {
       });
 
       const updatedCategories = updateCategoriesWithVacancyCounts(categories, vacancies);
-      
+
       logger.debug('Categories updated with vacancy counts', {
         updatedCount: updatedCategories.length
       });

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, ReactNode } from 'react';
 import { Logger } from '../../utils/Logger';
 import { ErrorBoundary } from '../ErrorBoundary';
 

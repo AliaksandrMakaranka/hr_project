@@ -1,95 +1,229 @@
-import React, { useMemo } from 'react';
-import type { ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { calculateSalary } from '@utils/salaryUtils';
 import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { EmptyMessage, ErrorMessage, LoadingMessage } from '../../components/common/Messages';
 import { ROUTES } from '../../constants/routes';
-import type { City } from '../../types/city';
 import { jobCategories } from '../../data/categories/index';
+import { VacancyStore } from '../../store/vacancyStore';
+import type { VacancyFilters } from '../../types/api';
+import type { City } from '../../types/city';
+import type { Vacancy } from '../../types/vacancy';
 import {
+  ApplyButton,
+  BackButton,
   Container,
-  Title,
-  Filters,
   FilterGroup,
   FilterLabel,
   FilterSelect,
+  Filters,
+  NoResults,
   SearchInput,
+  Title,
   VacanciesGrid,
   VacancyCard,
-  VacancyTitle,
   VacancyCompany,
+  VacancyDescription,
+  VacancyDetails,
+  VacancyHeader,
+  VacancyInfo,
+  VacancyInfoRow,
   VacancyLocation,
   VacancySalary,
-  VacancyDescription,
-  NoResults
+  VacancyTitle
 } from './styles';
-import { useVacancyStore } from '../../store/vacancyStore';
-import type { VacancyFilters } from '../../types/api';
-import { calculateSalary } from '@utils/salaryUtils';
+
+const VacancyDetailsPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [store] = useState(() => new VacancyStore());
+  const [vacancy, setVacancy] = useState<Vacancy | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchVacancy = async () => {
+      if (!id) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const vacancyData = await store.repository.getVacancyById(parseInt(id));
+        setVacancy(vacancyData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Не удалось загрузить вакансию');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVacancy();
+  }, [id, store.repository]);
+
+  if (loading) {
+    return (
+      <Container>
+        <LoadingMessage>Загрузка вакансии...</LoadingMessage>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <ErrorMessage>
+          <h3>Произошла ошибка</h3>
+          <p>{error}</p>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              padding: '0.5rem 1rem',
+              marginTop: '1rem',
+              backgroundColor: '#4a90e2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Вернуться назад
+          </button>
+        </ErrorMessage>
+      </Container>
+    );
+  }
+
+  if (!vacancy) {
+    return (
+      <Container>
+        <EmptyMessage>
+          <h3>Вакансия не найдена</h3>
+          <p>Возможно, вакансия была удалена или перемещена</p>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              padding: '0.5rem 1rem',
+              marginTop: '1rem',
+              backgroundColor: '#4a90e2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Вернуться назад
+          </button>
+        </EmptyMessage>
+      </Container>
+    );
+  }
+
+  const salaryData = calculateSalary(vacancy.salaryPerHour, vacancy.currency);
+  const formattedSalary = salaryData ? `${salaryData.hourly} (Брутто)` : 'Зарплата не указана';
+
+  return (
+    <Container>
+      <BackButton onClick={() => navigate(-1)}>← Назад</BackButton>
+
+      <VacancyDetails>
+        <VacancyHeader>
+          <VacancyTitle>{vacancy.title}</VacancyTitle>
+          <VacancyCompany>{vacancy.company}</VacancyCompany>
+        </VacancyHeader>
+
+        <VacancyInfo>
+          <VacancyInfoRow>
+            <span>Город:</span>
+            <span>{vacancy.city?.name || 'Не указан'}</span>
+          </VacancyInfoRow>
+          <VacancyInfoRow>
+            <span>Зарплата:</span>
+            <span>{formattedSalary}</span>
+          </VacancyInfoRow>
+          <VacancyInfoRow>
+            <span>Тип занятости:</span>
+            <span>{vacancy.employmentType || 'Не указан'}</span>
+          </VacancyInfoRow>
+          <VacancyInfoRow>
+            <span>Категория:</span>
+            <span>{vacancy.category?.name || 'Не указана'}</span>
+          </VacancyInfoRow>
+        </VacancyInfo>
+
+        <VacancyDescription>
+          <h3>Описание вакансии</h3>
+          <p>{vacancy.description || 'Описание отсутствует'}</p>
+        </VacancyDescription>
+
+        <ApplyButton onClick={() => store.applyForVacancy(vacancy.id)}>
+          Откликнуться на вакансию
+        </ApplyButton>
+      </VacancyDetails>
+    </Container>
+  );
+};
 
 const VacanciesPage: React.FC = () => {
   const navigate = useNavigate();
+  const [store] = useState(() => new VacancyStore());
+  const { items: vacancies, filters, loading, error } = store.state;
 
-  const { 
-    vacancies,
-    filters,
-    loading,
-    error,
-    setFilters,
-    fetchVacancies,
-  } = useVacancyStore();
+  useEffect(() => {
+    store.fetchVacancies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filters)]);
 
-  React.useEffect(() => {
-    fetchVacancies();
-  }, [fetchVacancies]);
+  const categories = jobCategories;
+  const cities = Array.from(
+    new Map(
+      vacancies
+        .filter((v: typeof vacancies[number]): v is typeof v & { city: City } => v.city !== undefined)
+        .filter((v: typeof vacancies[number]) => v.city !== undefined)
+        .map((v: typeof vacancies[number]) => [v.city!.id, v.city!])
+    ).values()
+  ) as City[];
 
-  const categories = useMemo(() => jobCategories, []);
-  const cities = useMemo(() => {
-    const uniqueCities = Array.from(
-      new Map(
-        vacancies
-          .filter((v): v is typeof v & { city: City } => v.city !== undefined)
-          .map(v => [v.city.id, v.city])
-      ).values()
-    );
-    return uniqueCities;
-  }, [vacancies]);
+  const setFilters = (newFilters: Partial<VacancyFilters>) => {
+    store.setFilters(newFilters);
+  };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ searchTerm: e.target.value, page: 1 });
   };
 
-  const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setFilters({ category: e.target.value || undefined, page: 1 });
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ categoryId: e.target.value ? parseInt(e.target.value) : undefined, page: 1 });
   };
 
-  const handleCityChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setFilters({ city: e.target.value || undefined, page: 1 });
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ cityId: e.target.value ? parseInt(e.target.value) : undefined, page: 1 });
   };
 
-  const handleEmploymentTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleEmploymentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({ employmentType: e.target.value || undefined, page: 1 });
   };
 
-  const handleSalaryFromChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
+  const handleSalaryFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
     setFilters({ salaryFrom: isNaN(value) ? undefined : value, page: 1 });
   };
 
-  const handleSalaryToChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
+  const handleSalaryToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
     setFilters({ salaryTo: isNaN(value) ? undefined : value, page: 1 });
   };
 
-  const handleSortByChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({ sortBy: e.target.value as VacancyFilters['sortBy'] || undefined, page: 1 });
   };
 
-  const handleSortOrderToggle = () => {
+  const handleSortOrderChange = () => {
     const currentSortOrder = filters.sortOrder;
     const newSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
-    setFilters({ 
+    setFilters({
       sortOrder: newSortOrder,
-      page: 1
+      page: 1,
     });
   };
 
@@ -107,6 +241,53 @@ const VacanciesPage: React.FC = () => {
     { value: 'salary', label: 'Зарплата' },
   ];
 
+  if (loading) {
+    return (
+      <Container>
+        <Title>Вакансии</Title>
+        <LoadingMessage>Загрузка вакансий...</LoadingMessage>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Title>Вакансии</Title>
+        <ErrorMessage>
+          <h3>Произошла ошибка</h3>
+          <p>{error}</p>
+          <button
+            onClick={() => store.fetchVacancies()}
+            style={{
+              padding: '0.5rem 1rem',
+              marginTop: '1rem',
+              backgroundColor: '#4a90e2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Попробовать снова
+          </button>
+        </ErrorMessage>
+      </Container>
+    );
+  }
+
+  if (vacancies.length === 0) {
+    return (
+      <Container>
+        <Title>Вакансии</Title>
+        <EmptyMessage>
+          <h3>Вакансии не найдены</h3>
+          <p>Попробуйте изменить параметры поиска или выбрать другой город</p>
+        </EmptyMessage>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Title>Вакансии</Title>
@@ -118,19 +299,19 @@ const VacanciesPage: React.FC = () => {
             type="text"
             placeholder="Поиск по названию, компании или описанию"
             value={filters.searchTerm || ''}
-            onChange={handleSearchChange}
+            onChange={handleSearch}
           />
         </FilterGroup>
 
         <FilterGroup>
           <FilterLabel>Категория</FilterLabel>
           <FilterSelect
-            value={filters.category || ''}
+            value={filters.categoryId?.toString() || ''}
             onChange={handleCategoryChange}
           >
             <option value="">Все категории</option>
             {categories.map(category => (
-              <option key={category.id} value={category.name}>{category.name}</option>
+              <option key={category.id} value={category.id.toString()}>{category.name}</option>
             ))}
           </FilterSelect>
         </FilterGroup>
@@ -138,12 +319,12 @@ const VacanciesPage: React.FC = () => {
         <FilterGroup>
           <FilterLabel>Город</FilterLabel>
           <FilterSelect
-            value={filters.city || ''}
+            value={filters.cityId?.toString() || ''}
             onChange={handleCityChange}
           >
             <option value="">Все города</option>
-            {cities.map(city => (
-              <option key={city.id} value={city.name}>{city.name}</option>
+            {cities.map((city: City) => (
+              <option key={city.id} value={city.id.toString()}>{city.name}</option>
             ))}
           </FilterSelect>
         </FilterGroup>
@@ -167,14 +348,14 @@ const VacanciesPage: React.FC = () => {
             <SearchInput
               type="number"
               placeholder="от"
-              value={filters.salaryFrom || ''}
+              value={filters.salaryFrom?.toString() || ''}
               onChange={handleSalaryFromChange}
               style={{ width: '80px' }}
             />
             <SearchInput
               type="number"
               placeholder="до"
-              value={filters.salaryTo || ''}
+              value={filters.salaryTo?.toString() || ''}
               onChange={handleSalaryToChange}
               style={{ width: '80px' }}
             />
@@ -186,7 +367,7 @@ const VacanciesPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <FilterSelect
               value={filters.sortBy || ''}
-              onChange={handleSortByChange}
+              onChange={handleSortChange}
             >
               <option value="">По умолчанию</option>
               {sortByOptions.map(option => (
@@ -194,7 +375,7 @@ const VacanciesPage: React.FC = () => {
               ))}
             </FilterSelect>
             <button
-              onClick={handleSortOrderToggle}
+              onClick={handleSortOrderChange}
               style={{
                 padding: '0.5rem',
                 border: '1px solid #d1d5db',
@@ -209,12 +390,9 @@ const VacanciesPage: React.FC = () => {
         </FilterGroup>
       </Filters>
 
-      {loading && <p>Загрузка вакансий...</p>}
-      {error && <p style={{ color: 'red' }}>Ошибка загрузки: {error}</p>}
-
       {!loading && !error && displayedVacancies.length > 0 ? (
         <VacanciesGrid>
-          {displayedVacancies.map((vacancy, index) => {
+          {displayedVacancies.map((vacancy: typeof vacancies[number], index: number) => {
             const salaryData = calculateSalary(vacancy.salaryPerHour, vacancy.currency);
             const formattedSalary = salaryData ? `${salaryData.hourly} (Брутто)` : 'Зарплата не указана';
 
@@ -246,4 +424,4 @@ const VacanciesPage: React.FC = () => {
   );
 };
 
-export default VacanciesPage; 
+export { VacanciesPage, VacancyDetailsPage };

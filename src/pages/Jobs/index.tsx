@@ -1,28 +1,28 @@
 import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { NAVIGATION, ROUTES } from '../../constants/routes';
 import { jobCategories as categories } from '../../data/categories/index';
 import { cities } from '../../data/cities';
+import { useVacancyFilters } from '../../hooks/useVacancyFilters';
 import type { City } from '../../types/city';
 import type { JobCategory } from '../../types/jobCategory';
 import type { Vacancy } from '../../types/vacancy';
-import { useVacancyFilters } from '../../hooks/useVacancyFilters';
-import { ROUTES, NAVIGATION } from '../../constants/routes';
-import { logger } from '../../utils/logger';
+import { logger } from '../../utils/Logger';
 import {
   Container,
-  PageHeader,
-  PageTitle,
-  LocationInfo,
-  VacanciesList,
-  VacancyCard,
-  VacancyTitle,
-  VacancyInfo,
   InfoRow,
-  VacancyDescription,
-  ViewButton,
+  LocationInfo,
   NavButtonsContainer,
   NavLinkButton,
-  NoVacanciesMessage
+  NoVacanciesMessage,
+  PageHeader,
+  PageTitle,
+  VacanciesList,
+  VacancyCard,
+  VacancyDescription,
+  VacancyInfo,
+  VacancyTitle,
+  ViewButton
 } from './styles';
 
 /**
@@ -48,14 +48,14 @@ const JobsPage: React.FC = () => {
       if (categoryId && cityId) {
         const category = categories.find((c: JobCategory) => c.id === categoryId);
         const city = cities.find((c: City) => c.id === cityId);
-        
+
         if (!category || !city) {
           return 'Вакансии не найдены';
         }
-        
+
         return `${category.name} в ${city.name}`;
       }
-      
+
       if (categoryId) {
         const category = categories.find((c: JobCategory) => c.id === categoryId);
         if (!category) {
@@ -63,7 +63,7 @@ const JobsPage: React.FC = () => {
         }
         return `Вакансии в категории "${category.name}"`;
       }
-      
+
       if (cityId) {
         const city = cities.find((c: City) => c.id === cityId);
         if (!city) {
@@ -71,7 +71,7 @@ const JobsPage: React.FC = () => {
         }
         return `Вакансии в городе ${city.name}`;
       }
-      
+
       return 'Все вакансии';
     } catch (error) {
       logger.error('Error getting header info', { error });
@@ -158,8 +158,8 @@ const JobsPage: React.FC = () => {
               <VacancyDescription data-testid={`vacancy-description-${vacancy.id}`}>
                 {vacancy.description || 'Описание отсутствует'}
               </VacancyDescription>
-              <ViewButton 
-                as={Link} 
+              <ViewButton
+                as={Link}
                 to={ROUTES.VACANCY(vacancy.id)}
                 onClick={() => handleVacancyClick(vacancy.id)}
               >

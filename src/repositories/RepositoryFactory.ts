@@ -1,55 +1,35 @@
-import { BaseRepository } from './BaseRepository';
-import { VacanciesRepository } from './VacanciesRepository';
-import { CitiesRepository } from './CitiesRepository';
 import { CategoriesRepository } from './CategoriesRepository';
-import { BaseApiClient } from '../api/base/ApiClient';
-import { Logger } from '../utils/Logger';
+import { CitiesRepository } from './CitiesRepository';
+import { VacanciesRepository } from './VacanciesRepository';
 
 export class RepositoryFactory {
   private static instance: RepositoryFactory;
-  private readonly repositories: Map<string, BaseRepository<any>>;
+  private categoriesRepository: CategoriesRepository;
+  private citiesRepository: CitiesRepository;
+  private vacanciesRepository: VacanciesRepository;
 
-  private constructor(
-    private readonly apiClient: BaseApiClient,
-    private readonly logger: Logger
-  ) {
-    this.repositories = new Map();
+  private constructor() {
+    this.categoriesRepository = new CategoriesRepository();
+    this.citiesRepository = new CitiesRepository();
+    this.vacanciesRepository = new VacanciesRepository();
   }
 
-  public static getInstance(apiClient: BaseApiClient, logger: Logger): RepositoryFactory {
+  public static getInstance(): RepositoryFactory {
     if (!RepositoryFactory.instance) {
-      RepositoryFactory.instance = new RepositoryFactory(apiClient, logger);
+      RepositoryFactory.instance = new RepositoryFactory();
     }
     return RepositoryFactory.instance;
   }
 
-  public getVacanciesRepository(): VacanciesRepository {
-    if (!this.repositories.has('vacancies')) {
-      this.repositories.set(
-        'vacancies',
-        new VacanciesRepository(this.apiClient, this.logger)
-      );
-    }
-    return this.repositories.get('vacancies') as VacanciesRepository;
+  public getCategoriesRepository(): CategoriesRepository {
+    return this.categoriesRepository;
   }
 
   public getCitiesRepository(): CitiesRepository {
-    if (!this.repositories.has('cities')) {
-      this.repositories.set(
-        'cities',
-        new CitiesRepository(this.apiClient, this.logger)
-      );
-    }
-    return this.repositories.get('cities') as CitiesRepository;
+    return this.citiesRepository;
   }
 
-  public getCategoriesRepository(): CategoriesRepository {
-    if (!this.repositories.has('categories')) {
-      this.repositories.set(
-        'categories',
-        new CategoriesRepository(this.apiClient, this.logger)
-      );
-    }
-    return this.repositories.get('categories') as CategoriesRepository;
+  public getVacanciesRepository(): VacanciesRepository {
+    return this.vacanciesRepository;
   }
 } 

@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import CategoryCard from '../CategoryCard';
-import { Container, Grid, Title } from './styles';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CategoriesRepository } from '../../../api';
 import type { JobCategory } from '../../../types';
-import { logger } from '../../../utils/logger';
+import CategoryCard from '../CategoryCard';
+import { Container, Grid, Title } from './styles';
 
 const CategoriesGrid: React.FC = () => {
   const [categories, setCategories] = useState<JobCategory[]>([]);
@@ -14,17 +13,17 @@ const CategoriesGrid: React.FC = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const { data } = await categoriesRepository.getAll();
-        setCategories(data.items);
-      } catch (err) {
-        logger.error('Error fetching categories', { error: err });
-        setError('Failed to load categories');
+        const categories = await categoriesRepository.getAll();
+        setCategories(categories);
+      } catch {
+        setError('Failed to fetch categories');
       } finally {
         setLoading(false);
       }
     };
-
     fetchCategories();
   }, [categoriesRepository]);
 

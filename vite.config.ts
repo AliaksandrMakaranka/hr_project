@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { defineConfig } from 'vite'
 import { compression } from 'vite-plugin-compression2'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -113,6 +113,9 @@ export default defineConfig({
     hmr: {
       overlay: true,
     },
+    proxy: {
+      '/api': 'http://localhost:3001',
+    },
   },
   test: {
     globals: true,
@@ -129,5 +132,7 @@ export default defineConfig({
       ],
     },
     deps: {
-      inline: [/@te
+      inline: [/@testing-library/]
+    }
+  }
 })

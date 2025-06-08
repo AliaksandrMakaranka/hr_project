@@ -1,5 +1,5 @@
-import type { Vacancy, City, JobCategory } from '../types';
-import { logger } from './logger';
+import type { City, JobCategory, Vacancy } from '../types';
+import { logger } from './Logger';
 
 /**
  * Фильтрует вакансии по категории и городу
@@ -18,10 +18,10 @@ export const filterVacancies = (
     return [];
   }
 
-  logger.debug('Starting vacancy filtering', { 
+  logger.debug('Starting vacancy filtering', {
     totalVacancies: vacancies.length,
-    categoryId, 
-    cityId 
+    categoryId,
+    cityId
   });
 
   const filtered = vacancies.filter(vacancy => {
@@ -64,9 +64,9 @@ export const countVacanciesByCategory = (
   categoryId: number
 ): number => {
   if (!Array.isArray(vacancies) || typeof categoryId !== 'number') {
-    logger.error('Invalid parameters for countVacanciesByCategory', { 
-      vacancies, 
-      categoryId 
+    logger.error('Invalid parameters for countVacanciesByCategory', {
+      vacancies,
+      categoryId
     });
     return 0;
   }
@@ -87,9 +87,9 @@ export const countVacanciesByCity = (
   cityId: number
 ): number => {
   if (!Array.isArray(vacancies) || typeof cityId !== 'number') {
-    logger.error('Invalid parameters for countVacanciesByCity', { 
-      vacancies, 
-      cityId 
+    logger.error('Invalid parameters for countVacanciesByCity', {
+      vacancies,
+      cityId
     });
     return 0;
   }

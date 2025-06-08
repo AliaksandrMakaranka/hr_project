@@ -1,57 +1,43 @@
-import { BaseEntity, IBaseRepository } from '../types/base';
-import { Logger } from '../utils/Logger';
+import { apiClient } from '../api/client';
 
-export abstract class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> {
-  protected constructor(
-    protected readonly apiClient: BaseApiClient,
-    protected readonly logger: Logger
-  ) { }
+export abstract class BaseRepository<T> {
+  protected api: typeof apiClient;
+  protected baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.api = apiClient;
+    this.baseUrl = baseUrl;
+  }
+
+  protected async get<R>(url: string): Promise<R> {
+    return this.api.get<R>(`${this.baseUrl}${url}`);
+  }
+
+  protected async post<R>(url: string, data: unknown): Promise<R> {
+    return this.api.post<R>(`${this.baseUrl}${url}`, data);
+  }
+
+  protected async put<R>(url: string, data: unknown): Promise<R> {
+    return this.api.put<R>(`${this.baseUrl}${url}`, data);
+  }
+
+  public async delete<R>(url: string): Promise<R> {
+    return this.api.delete<R>(`${this.baseUrl}${url}`);
+  }
 
   public async getAll(): Promise<T[]> {
-    const result = await this.apiClient.request<T[]>('/');
-    if ('error' in result) {
-      throw new Error(result.error.message);
-    }
-    return result.data;
+    return this.get<T[]>('');
   }
 
-  public async getById(id: number): Promise<T | null> {
-    const result = await this.apiClient.request<T>(`/${id}`);
-    if ('error' in result) {
-      if (result.error.status === 404) {
-        return null;
-      }
-      throw new Error(result.error.message);
-    }
-    return result.data;
+  public async getById(id: number): Promise<T> {
+    return this.get<T>(`/${id}`);
   }
 
-  public async create(data: Omit<T, 'id'>): Promise<T> {
-    const result = await this.apiClient.request<T>('/', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    if ('error' in result) {
-      throw new Error(result.error.message);
-    }
-    return result.data;
+  public async create(data: Partial<T>): Promise<T> {
+    return this.post<T>('', data);
   }
 
   public async update(id: number, data: Partial<T>): Promise<T> {
-    const result = await this.apiClient.request<T>(`/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-    if ('error' in result) {
-      throw new Error(result.error.message);
-    }
-    return result.data;
-  }
-
-  public async delete(id: number): Promise<boolean> {
-    const result = await this.apiClient.request<void>(`/${id}`, {
-      method: 'DELETE',
-    });
-    return !('error' in result);
+    return this.put<T>(`/${id}`, data);
   }
 } 

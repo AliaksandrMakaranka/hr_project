@@ -1,8 +1,8 @@
-import type { ApiResponse, CitiesResponse } from '../types/api';
+import { logger } from '@utils/Logger';
+import { updateCitiesWithVacancyCounts } from '@utils/filters';
 import { cities as mockCities } from '../data/cities';
 import { vacancies } from '../data/vacancies';
-import { updateCitiesWithVacancyCounts } from '@utils/filters';
-import { logger } from '@utils/logger';
+import type { ApiResponse, CitiesResponse } from '../types/api';
 
 /**
  * Получает список городов с количеством вакансий
@@ -50,8 +50,7 @@ export const getCities = async (page: number = 1, limit: number = 10): Promise<A
               page,
               limit,
               totalPages: Math.ceil(total / limit)
-            },
-            status: 200
+            }
           });
         } catch (error) {
           logger.error('Error processing cities data', {

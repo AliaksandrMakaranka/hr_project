@@ -1,7 +1,7 @@
-import { BASE_CONFIG, BaseConfig } from './base';
-import { UI_CONFIG, UIConfig } from './ui';
-import { ROUTES_CONFIG, RoutesConfig } from './routes';
 import { API_CONFIG, ApiConfig } from './api';
+import { BASE_CONFIG, BaseConfig } from './base';
+import { ROUTES_CONFIG, RoutesConfig } from './routes';
+import { UIConfig, UI_CONFIG } from './ui';
 
 export const config = {
   ...BASE_CONFIG,
@@ -13,11 +13,8 @@ export const config = {
 export type Config = typeof config;
 
 export type {
-  BaseConfig,
-  UIConfig,
-  RoutesConfig,
-  ApiConfig,
+  ApiConfig, BaseConfig, RoutesConfig, UIConfig
 };
 
 // Вспомогательные функции для работы с конфигурацией
-export const isFeatur 
+// Remove or fix export const isFeatur 

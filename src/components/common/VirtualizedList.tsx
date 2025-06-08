@@ -1,40 +1,44 @@
-import React, { memo } from 'react';
-import { FixedSizeList } from 'react-window';
+import React from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeList } from 'react-window';
 
 interface VirtualizedListProps<T> {
   items: T[];
-  height: number;
+  height?: number;
   itemHeight: number;
   renderItem: (item: T, index: number) => React.ReactNode;
 }
 
-export const VirtualizedList = memo(<T,>({
+export function VirtualizedList<T>({
   items,
   height,
   itemHeight,
-  renderItem
-}: VirtualizedListProps<T>) => {
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => (
-    <div style={style}>
-      {renderItem(items[index], index)}
+  renderItem,
+}: VirtualizedListProps<T>) {
+  return (
+    <div style={{ height: height || '100%', width: '100%' }}>
+      <AutoSizer>
+        {({ height: autoHeight, width }) => (
+          <FixedSizeList
+            height={autoHeight}
+            width={width}
+            itemCount={items.length}
+            itemSize={itemHeight}
+          >
+            {({ index, style }) => {
+              const item = items[index];
+              if (!item) return null;
+              return (
+                <div style={style}>
+                  {renderItem(item, index)}
+                </div>
+              );
+            }}
+          </FixedSizeList>
+        )}
+      </AutoSizer>
     </div>
   );
-
-  return (
-    <AutoSizer>
-      {({ width }) => (
-        <FixedSizeList
-          height={height}
-          width={width}
-          itemCount={items.length}
-          itemSize={itemHeight}
-        >
-          {Row}
-        </FixedSizeList>
-      )}
-    </AutoSizer>
-  );
-});
+}
 
 VirtualizedList.displayName = 'VirtualizedList'; 

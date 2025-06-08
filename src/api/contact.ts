@@ -1,5 +1,5 @@
 import type { ApiResponse } from '../types/api';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/Logger';
 
 export interface ContactFormData {
   name: string;
@@ -42,9 +42,7 @@ export class ContactRepository {
             data: {
               success: true,
               messageId: `msg_${Date.now()}`
-            },
-            status: 200,
-            message: 'Contact form submitted successfully'
+            }
           });
         }, 500);
       });

@@ -1,43 +1,41 @@
+import { Vacancy } from '../types';
 import { ErrorHandler } from '../utils/ErrorHandler';
+import { Logger } from '../utils/Logger';
+import { ApiRequestOptions, ApiResponse } from './types/api';
 
-export interface ApiError {
-  message: string;
-  status?: number;
-  data?: unknown;
-}
+export type { ApiRequestOptions, ApiResponse } from './types/api';
 
-export interface ApiResponse<T> {
-  data: T;
-  error?: never;
-}
+class ApiClient {
+  private static instance: ApiClient;
+  private logger: Logger;
+  private errorHandler: ErrorHandler;
+  private baseUrl: string;
 
-export interface ApiErrorResponse {
-  data?: never;
-  error: ApiError;
-}
+  constructor() {
+    this.logger = Logger.getInstance();
+    this.errorHandler = ErrorHandler.getInstance();
+    this.baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+  }
 
-export type ApiResult<T> = ApiResponse<T> | ApiErrorResponse;
+  public static getInstance(): ApiClient {
+    if (!ApiClient.instance) {
+      ApiClient.instance = new ApiClient();
+    }
+    return ApiClient.instance;
+  }
 
-const errorHandler = ErrorHandler.getInstance();
-
-export class BaseApiClient {
-  protected constructor(
-    protected readonly baseUrl: string,
-    protected readonly headers: Record<string, string> = {}
-  ) { }
-
-  protected async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<ApiResult<T>> {
+  public async request<T>(options: ApiRequestOptions): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
+      const { method, url, data, headers = {} } = options;
+      this.logger.debug(`Making request to ${url}`, { method, data, headers });
+
+      const response = await fetch(`${this.baseUrl}${url}`, {
+        method,
         headers: {
           'Content-Type': 'application/json',
-          ...this.headers,
-          ...options.headers,
+          ...headers,
         },
+        body: data ? JSON.stringify(data) : undefined,
       });
 
       return this.handleResponse<T>(response);
@@ -46,83 +44,195 @@ export class BaseApiClient {
     }
   }
 
-  protected handleResponse<T>(response: Response): Promise<ApiResult<T>> {
+  protected async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
     if (!response.ok) {
-      const error: ApiError = {
-        message: `HTTP Error: ${response.status}`,
-        status: response.status,
-      };
+      let errorMessage = `HTTP Error: ${response.status}`;
+      let errorData = null;
 
       try {
-        const errorData = await response.json();
-        error.data = errorData;
+        const errorResponse = await response.json();
+        errorMessage = errorResponse.message || errorMessage;
+        errorData = errorResponse;
       } catch {
         // If we can't parse the error response as JSON, we'll just use the status
       }
 
-      errorHandler.handleError({
-        error: new Error(error.message),
-        context: { status: response.status, data: error.data },
-      });
-
-      return Promise.resolve({ error });
-    }
-
-    try {
-      const data = await response.json();
-      return { data };
-    } catch (error) {
-      const apiError: ApiError = {
-        message: 'Failed to parse response',
+      const error = {
+        message: errorMessage,
+        code: `HTTP_${response.status}`,
+        status: response.status,
+        data: errorData
       };
 
-      errorHandler.handleError({
-        error: error instanceof Error ? error : new Error('Failed to parse response'),
+      this.errorHandler.handleError({
+        error: new Error(error.message),
+        context: { status: response.status, data: errorData },
       });
 
-      return { error: apiError };
+      throw error;
     }
+
+    const data = await response.json();
+    return { data };
   }
 
-  protected handleError(error: unknown): ApiResult<never> {
-    const apiError = errorHandler.handleApiError(error);
-    return { error: apiError };
-  }
-}
-
-export class VacancyApiClient extends BaseApiClient {
-  constructor(baseUrl: string, headers?: Record<string, string>) {
-    super(baseUrl, headers);
+  protected handleError(error: unknown): never {
+    const apiError = this.errorHandler.handleError(error);
+    throw apiError;
   }
 
-  async getVacancies(_filters: VacancyFilters): Promise<ApiResult<Vacancy[]>> {
-    return this.request<Vacancy[]>('/vacancies', {
+  // API Methods
+  async getVacancies(): Promise<ApiResponse<Vacancy[]>> {
+    return this.request<Vacancy[]>({
       method: 'GET',
-      // Добавить параметры фильтрации
+      url: '/vacancies',
     });
   }
 
-  // Другие методы для работы с вакансиями
+  async getVacancyById(id: number): Promise<ApiResponse<Vacancy>> {
+    return this.request<Vacancy>({
+      method: 'GET',
+      url: `/vacancies/${id}`,
+    });
+  }
+
+  async createVacancy(data: Partial<Vacancy>): Promise<ApiResponse<Vacancy>> {
+    return this.request<Vacancy>({
+      method: 'POST',
+      url: '/vacancies',
+      data,
+    });
+  }
+
+  async updateVacancy(id: number, data: Partial<Vacancy>): Promise<ApiResponse<Vacancy>> {
+    return this.request<Vacancy>({
+      method: 'PUT',
+      url: `/vacancies/${id}`,
+      data,
+    });
+  }
+
+  async deleteVacancy(id: number): Promise<ApiResponse<void>> {
+    return this.request<void>({
+      method: 'DELETE',
+      url: `/vacancies/${id}`,
+    });
+  }
+
+  async get<T>(url: string): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${url}`);
+    if (!response.ok) {
+      let errorText = `HTTP error! Status: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorJson = await response.json();
+          errorText = errorJson.message || JSON.stringify(errorJson);
+        } else {
+          errorText = await response.text();
+        }
+      } catch (e) {
+        // Fallback to generic error if response body cannot be read
+      }
+      throw new Error(`Failed to fetch ${url}: ${errorText}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Expected JSON for ${url}, but received non-JSON: ${text.slice(0, 200)}`);
+    }
+  }
+
+  async post<T>(url: string, body?: unknown): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!response.ok) {
+      let errorText = `HTTP error! Status: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorJson = await response.json();
+          errorText = errorJson.message || JSON.stringify(errorJson);
+        } else {
+          errorText = await response.text();
+        }
+      } catch (e) {
+        // Fallback to generic error if response body cannot be read
+      }
+      throw new Error(`Failed to post to ${url}: ${errorText}`);
+    }
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Expected JSON for ${url}, but received non-JSON: ${text.slice(0, 200)}`);
+    }
+  }
+
+  async put<T>(url: string, body?: unknown): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!response.ok) {
+      let errorText = `HTTP error! Status: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorJson = await response.json();
+          errorText = errorJson.message || JSON.stringify(errorJson);
+        } else {
+          errorText = await response.text();
+        }
+      } catch (e) {
+        // Fallback to generic error if response body cannot be read
+      }
+      throw new Error(`Failed to put to ${url}: ${errorText}`);
+    }
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Expected JSON for ${url}, but received non-JSON: ${text.slice(0, 200)}`);
+    }
+  }
+
+  async delete<T>(url: string): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      let errorText = `HTTP error! Status: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorJson = await response.json();
+          errorText = errorJson.message || JSON.stringify(errorJson);
+        } else {
+          errorText = await response.text();
+        }
+      } catch (e) {
+        // Fallback to generic error if response body cannot be read
+      }
+      throw new Error(`Failed to delete ${url}: ${errorText}`);
+    }
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      const text = await response.text();
+      throw new Error(`Expected JSON for ${url}, but received non-JSON: ${text.slice(0, 200)}`);
+    }
+  }
 }
 
-export const apiClient = {
-  get: <T>(url: string, options: RequestInit = {}) =>
-    apiRequest<T>(url, { ...options, method: 'GET' }),
-
-  post: <T>(url: string, data: unknown, options: RequestInit = {}) =>
-    apiRequest<T>(url, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  put: <T>(url: string, data: unknown, options: RequestInit = {}) =>
-    apiRequest<T>(url, {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
-
-  delete: <T>(url: string, options: RequestInit = {}) =>
-    apiRequest<T>(url, { ...options, method: 'DELETE' }),
-}; 
+export const apiClient = new ApiClient(); 

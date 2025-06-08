@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { ErrorHandler } from '../utils/ErrorHandler';
 import { Logger } from '../utils/Logger';
 

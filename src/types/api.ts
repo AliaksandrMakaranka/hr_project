@@ -1,6 +1,6 @@
-import type { Vacancy } from './vacancy';
 import type { City } from './city';
 import type { JobCategory } from './jobCategory';
+import type { Vacancy } from './vacancy';
 
 export interface ApiResponse<T> {
   data: T;
@@ -30,8 +30,8 @@ export interface VacancyApplicationData {
 }
 
 export interface VacancyFilters {
-  city?: string;
-  category?: string;
+  cityId?: number;
+  categoryId?: number;
   employmentType?: string;
   salaryFrom?: number;
   salaryTo?: number;
@@ -40,6 +40,8 @@ export interface VacancyFilters {
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
+  tags?: string[];
+  isActive?: boolean;
 }
 
 export interface PaginatedResponse<T> {
