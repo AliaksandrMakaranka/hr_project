@@ -1,187 +1,56 @@
-# HR Company — Вакансии и Категории
-# ПРОЕКТ ЗАМАРОЖЕН
-## Описание
+# HR Company: Jobs in Poland
 
-Проект представляет собой современное веб-приложение для поиска вакансий и управления категориями. Построен с использованием React, TypeScript и современных инструментов разработки. Приложение обеспечивает удобный интерфейс для поиска работы, фильтрации вакансий и управления категориями.
+Front-end of a recruitment agency website: job offers by city and category, filters, a city map and cookie/privacy pages. Cities: Warsaw, Kraków, Wrocław, Łódź, Poznań, Gdańsk.
 
-### Технический стек
-- **Frontend Framework**: React 18+
-- **Язык программирования**: TypeScript
-- **Управление состоянием**: Zustand
-- **Стилизация**: Styled-components
-- **Маршрутизация**: React Router DOM
-- **Анимации**: Framer Motion
-- **Карты**: Leaflet + React Leaflet
-- **Сборка**: Vite
-- **Тестирование**: Vitest + Testing Library
-- **Линтинг**: ESLint
-- **Анализ кода**: ts-prune, depcheck, eslint-plugin-unused-imports
+**Stack:** React 18 · TypeScript · Vite · Zustand · React Router · styled-components · Framer Motion · Leaflet · Vitest + Testing Library · ESLint
 
-## Структура проекта
+> Status: prototype. The UI works on mock data; the back-end API is not connected yet.
+
+## Features
+
+- Job list with filters by city and category
+- Job details page
+- City selection with map (Leaflet)
+- Category grid with offer counts
+- Cookie consent, privacy policy and terms of use pages
+- Error boundary and typed API layer ready for a real back-end
+
+## Structure
+
 ```
 src/
-  api/           # API-клиенты и репозитории для работы с бэкендом
-  assets/        # Статические ресурсы (изображения, иконки)
-  components/    # Общие компоненты
-  constants/     # Константы и конфигурация
-  data/          # Мок-данные для разработки
-  features/      # Бизнес-компоненты (Vacancy, Categories и др.)
-  hooks/         # Пользовательские React-хуки
-  layouts/       # Компоненты разметки страниц
-  pages/         # Компоненты страниц
-  store/         # Zustand store и селекторы
-  styles/        # Глобальные стили
-  theme/         # Конфигурация темы
-  types/         # TypeScript типы и интерфейсы
-  ui/            # Базовые UI-компоненты
-  utils/         # Вспомогательные функции
+├── api/        # Typed API clients (vacancies, categories, cities, contact)
+├── features/   # Business components: vacancy, categories, city selection, cookie consent
+├── pages/      # Home, Jobs, Vacancies, Cities, City, Categories, About, legal pages
+├── store/      # Zustand state and selectors
+├── ui/         # Reusable UI components
+├── hooks/      # useVacancyFilters, useVacancyCounts, useCookieConsent
+└── data/       # Mock data for development
 ```
 
-## Архитектура проекта
+Detailed architecture notes (in Russian): [docs/architecture-ru.md](docs/architecture-ru.md)
 
-### Взаимодействие между модулями
+## Running locally
 
-1. **API Layer**
-   - Репозитории в `api/` отвечают за взаимодействие с бэкендом
-   - Используют типизированные запросы и обработку ошибок
-   - Возвращают данные в формате, совместимом с типами из `types/`
-   - Поддерживают пагинацию и фильтрацию
-   - Оптимизированы для работы с большими наборами данных
+Requirements: Node.js 20+.
 
-2. **Store (Zustand)**
-   - Централизованное управление состоянием
-   - Разделение на слайсы по функциональности
-   - Селекторы для оптимизации ререндеров
-   - Actions для модификации состояния
-   - Поддержка кэширования и инвалидации данных
+```bash
+git clone https://github.com/AliaksandrMakaranka/hr_project.git
+cd hr_project
+npm install
+npm run dev       # http://localhost:5173
+```
 
-3. **UI Layer**
-   - Компоненты используют только селекторы и actions из store
-   - Разделение на бизнес-компоненты (`features/`) и UI-компоненты (`ui/`)
-   - Переиспользуемые компоненты в `components/`
-   - Оптимизированная производительность через мемоизацию
-   - Улучшенная обработка состояний загрузки и ошибок
+Other commands:
 
-### Управление состоянием
-
-- **Zustand Store**
-  - Модульная структура с разделением на слайсы
-  - Типизированные селекторы и actions
-  - Middleware для логирования и персистентности
-  - Оптимизация производительности через мемоизацию
-  - Поддержка асинхронных операций
-
-### Маршрутизация и обработка ошибок
-
-- **React Router DOM**
-  - Защищенные маршруты
-  - Ленивая загрузка компонентов
-  - Обработка 404 и других ошибок
-  - Интеграция с состоянием приложения
-  - Поддержка динамических параметров
-
-### Работа с API
-
-- **API Client**
-  - Типизированные запросы
-  - Интерцепторы для обработки ошибок
-  - Кэширование и инвалидация
-  - Обработка состояний загрузки
-  - Поддержка пагинации и фильтрации
-  - Оптимизация сетевых запросов
-
-## Запуск проекта
-
-1. **Установка зависимостей**
-   ```bash
-   npm install
-   ```
-
-2. **Разработка**
-   ```bash
-   npm run dev
-   ```
-
-3. **Сборка**
-   ```bash
-   npm run build
-   ```
-
-4. **Тестирование**
-   ```bash
-   npm run test        # Запуск тестов
-   npm run test:ui     # Запуск UI для тестов
-   npm run test:coverage # Проверка покрытия
-   ```
-
-5. **Линтинг и проверка кода**
-   ```bash
-   npm run lint        # Проверка кода
-   npm run lint:fix    # Автоматическое исправление проблем
-   npm run check:dead-code  # Поиск неиспользуемого кода
-   npm run check:deps  # Проверка неиспользуемых зависимостей
-   ```
-
-## Инструменты анализа кода
-
-### ts-prune
-Инструмент для поиска неиспользуемого кода в TypeScript проектах:
-- Находит неиспользуемые экспорты
-- Помогает обнаружить мертвый код
-- Показывает неиспользуемые типы и интерфейсы
-
-### depcheck
-Анализатор зависимостей, который:
-- Находит неиспользуемые зависимости в package.json
-- Выявляет недостающие зависимости
-- Помогает оптимизировать размер node_modules
-
-### eslint-plugin-unused-imports
-Плагин ESLint для работы с импортами:
-- Автоматически удаляет неиспользуемые импорты
-- Предупреждает о неиспользуемых переменных
-- Интегрируется с процессом линтинга
-
-## Алиасы импортов
-
-Для удобства разработки настроены алиасы в `tsconfig.json` и `vite.config.ts`:
-
-- `@features/*` → `src/features/*`
-- `@ui/*` → `src/ui/*`
-- `@layouts/*` → `src/layouts/*`
-- `@store/*` → `src/store/*`
-- `@types/*` → `src/types/*`
-- `@api/*` → `src/api/*`
-- `@utils/*` → `src/utils/*`
-- `@constants/*` → `src/constants/*`
-- `@hooks/*` → `src/hooks/*`
-
-## Документация компонентов
-
-Все компоненты и хуки документированы с использованием JSDoc. Документация включает:
-- Описание назначения компонента/хука
-- Типы пропсов и их описание
-- Примеры использования
-- Возвращаемые значения для хуков
-
-## Тестирование
-
-- Unit-тесты для бизнес-логики и утилит
-- Интеграционные тесты для компонентов
-- E2E тесты для критических путей
-- Покрытие кода тестами
-
-## Последние обновления
-
-### API и Вакансии
-- Улучшена интеграция с API вакансий
-- Добавлена поддержка пагинации
-- Оптимизирована обработка фильтров
-- Улучшена обработка ошибок API
-- Обновлен UI/UX страницы вакансий
-- Оптимизирована производительность
-- Улучшена обработка состояний загрузки
+```bash
+npm run build     # production build
+npm test          # 21 unit tests (Vitest)
+npm run lint      # ESLint
+```
 
 ---
 
-**Для вопросов и предложений — см. CONTRIBUTING.md или открывайте issue.**
+### 🇵🇱 Opis
+
+Front-end strony agencji rekrutacyjnej: oferty pracy według miast i kategorii, filtry, mapa miast. React, TypeScript, Vite, Zustand. Prototyp na danych testowych.
